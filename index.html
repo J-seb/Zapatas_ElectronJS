@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cálculo de Zapatas</title>
+    <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./src/css/styles.css">
+</head>
+<body>
+  <div class="row">
+    <div class="col-12">
+      <button class="btn fa fa-play" id="calcular"></button>
+    </div>
+  </div>
+  <div class="row m-0">
+    <div class="col-lg-6 p-0">
+      <canvas id="canvas2d" width="600" height="450">
+
+      </canvas>
+    </div>
+    <div class="col-lg-6 p-0">
+      <canvas id="canvas3d" width="600" height="450">
+
+      </canvas>
+    </div>
+  </div>
+  <!-- NAV-TAB-->
+  <div class="row">
+    <div class="col-12">
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button class="nav-link active" id="nav-suelos-tab" data-bs-toggle="tab" data-bs-target="#nav-suelos" type="button" role="tab" aria-controls="nav-suelos" aria-selected="true">Suelos</button>
+          <button class="nav-link" id="nav-datos-tab" data-bs-toggle="tab" data-bs-target="#nav-datos" type="button" role="tab" aria-controls="nav-datos" aria-selected="false">Datos Iniciales</button>
+          <button class="nav-link" id="nav-capacidad-tab" data-bs-toggle="tab" data-bs-target="#nav-capacidad" type="button" role="tab" aria-controls="nav-capacidad" aria-selected="false">Capacidad Portante</button>
+          <button class="nav-link" id="nav-asentamiento-tab" data-bs-toggle="tab" data-bs-target="#nav-asentamiento" type="button" role="tab" aria-controls="nav-asentamiento" aria-selected="false">Asentamiento</button>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-suelos" role="tabpanel" aria-labelledby="nav-suelos-tab">
+          <div class="row">
+            <div class="col-lg-6 mt-4">
+              <div class="row">
+                <div class="col-10 offset-1 border rounded pb-4 pt-3">
+                  <form id="agregar-elemento">
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="gammah" placeholder="&gamma;(h): [kN/m³]" name="gamma-h">
+                        <label for="gammah">&gamma;(h): [kN/m³]</label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="cohesion" placeholder="Cohesion: [kN/m²]" name="cohesion">
+                        <label for="cohesion">Cohesión: [kN/m²]</label>
+                      </div>
+                    </div>
+    
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="gammasat" placeholder="&gamma;(sat): [kN/m³]" name="gamma-sat">
+                        <label for="gammsat">&gamma;(sat): [kN/m³]</label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="es" placeholder="Es: [kN/m²]" name="es">
+                        <label for="es">Es: [kN/m²]</label>
+                      </div>
+                    </div>
+    
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="phi" placeholder="&phi;: [°]" name="phi">
+                        <label for="phi">&phi;: [°]</label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="espesor" placeholder="Espesor: [m]" name="espesor">
+                        <label for="espesor">Espesor: [m]</label>
+                      </div>
+                    </div>
+    
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="mu" placeholder="&mu;:" name="mu">
+                        <label for="mu">&mu;:</label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="eo" placeholder="eo: " name="eo">
+                        <label for="eo">eo: </label>
+                      </div>
+                    </div>
+    
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="cc" placeholder="Cc:" name="cc">
+                        <label for="cc" class="ml-5">Cc: </label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="cs" placeholder="Cs:" name="cs">
+                        <label for="cs">Cs: </label>
+                      </div>
+                    </div>
+
+                    <div class="row g-2 mt-1 mb-1">
+                      <div class="form-floating col-lg-4 offset-lg-1">
+                        <input type="text" class="form-control datos-suelos" id="nombre" placeholder="Nombre:" name="nombre">
+                        <label for="nombre" class="ml-5">Nombre: </label>
+                      </div>
+                      <div class="form-floating col-lg-4 offset-lg-2">
+                        <input type="color" class="form-control datos-suelos" id="color" placeholder="Color:" name="color">
+                        <label for="color">Color: </label>
+                      </div>
+                    </div>
+
+                    <div class="row g-2 mt-3 mb-1">
+                      <div class="offset-lg-2 col-2 mx-auto">
+                        <button type="submit" class="btn btn-outline-primary" id="boton-agregar">Agregar</button>
+                      </div>
+                      <div class="offset-lg-1 col-2 mx-auto">
+                        <button type="button" class="btn btn-outline-secondary" id="boton-modificar" disabled>Modificar</button>
+                      </div>
+                      <div class="offset-lg-1 col-2 mx-auto">
+                        <button type="button" class="btn btn-outline-danger" id="boton-eliminar" disabled>Eliminar</button>
+                      </div>
+                    </div>
+
+                  </form> 
+                </div>
+              </div>           
+            </div>
+
+            <div class="col-lg-6 mt-4">
+              <div class="row">
+                <div class="col-11 border rounded pb-4 pt-3 table-responsive">
+                  <table class="table table-hover text-center" id="tabla-datos">
+                    <thead>
+                      <tr class="align-middle">
+                        <th scope="col">Est</th>
+                        <th scope="col">&gamma;(h)</th>
+                        <th scope="col">C</th>
+                        <th scope="col">&gamma;(sat)</th>
+                        <th scope="col">Es</th>
+                        <th scope="col">&phi;</th>
+                        <th scope="col">Esp</th>
+                        <th scope="col">&mu;</th>
+                        <th scope="col">eo</th>
+                        <th scope="col">Cc</th>
+                        <th scope="col">Cs</th>
+                        <th scope="col">Nombre</th>
+                      </tr>
+                    </thead>
+                    <tbody id="elementos">
+                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-datos" role="tabpanel" aria-labelledby="nav-datos-tab">
+          <div class="row mt-4">
+            <div class="col-lg-2 offset-lg-2 col-10 offset-1 border rounded pb-4 pt-3">
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="l" placeholder="L: [m]" name="l">
+                  <label for="l" class="">L: [m]</label>
+                </div>
+              </div>
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="b" placeholder="B: [m]" name="b">
+                  <label for="b" class="ml-5">B: [m]</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-2 offset-lg-1 col-10 offset-1 border rounded pb-4 pt-3">
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="nf" placeholder="NF: [m]" name="nf">
+                  <label for="nf" class="ml-5">NF: [m]</label>
+                </div>
+              </div>
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="df" placeholder="Df: [m]" name="df">
+                  <label for="df" class="ml-5">Df: [m]</label>
+                </div>
+              </div>
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="d" placeholder="d: [m]" name="d">
+                  <label for="d" class="ml-5">d: [m]</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-2 offset-lg-1 col-10 offset-1 border rounded pb-4 pt-3">
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="ql" placeholder="Qload: [T]" name="ql">
+                  <label for="ql" class="ml-5">Qload: [T]</label>
+                </div>
+              </div>
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="phi2" placeholder="&Phi;: " name="phi2">
+                  <label for="phi2" class="ml-5">&Phi;: </label>
+                </div>
+              </div>
+              <div class="row g-2 mt-3 mb-1">
+                <div class="form-floating">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" id="fs" placeholder="FS: " name="fs">
+                  <label for="fs" class="ml-5">FS: </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-6 offset-3 border rounded pb-4 pt-3">
+              <select class="form-select" id="metodologia">
+                <option value="hansen">Metodología de Hansen</option>
+                <option value="meyerhof">Metodología de MeyerHof</option>
+                <option value="terzaghi">Metodología de Terzaghi</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-capacidad" role="tabpanel" aria-labelledby="nav-capacidad-tab">
+          <div class="row mt-2">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-10 offset-1 table-responsive">
+                  <table class="table table-hover text-center" id="tabla-resultados">
+                    <thead>
+                      <tr>
+                        <th scope="col">It</th>
+                        <th scope="col">&alpha;</th>
+                        <th scope="col">Ro</th>
+                        <th scope="col">R</th>
+                        <th scope="col">Hc</th>
+                        <th scope="col">&phi;prom</th>
+                      </tr>
+                    </thead>
+                    <tbody id="resultados">
+                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10 offset-1">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados2">
+                        <tr>
+                          <th>Nc</th>
+                          <td id="resnc"></td>
+                        </tr>
+                        <tr>
+                          <th>Nq</th>
+                          <td id="resnq"></td>
+                        </tr>
+                        <tr>
+                          <th>N&gamma;</th>
+                          <td id="resny"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10 offset-1">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados3">
+                        <tr>
+                          <th>Sc</th>
+                          <td id="ressc"></td>
+                        </tr>
+                        <tr>
+                          <th>Sq</th>
+                          <td id="ressq"></td>
+                        </tr>
+                        <tr>
+                          <th>S&gamma;</th>
+                          <td id="ressy"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10 offset-1">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>Dc</th>
+                          <td id="resdc"></td>
+                        </tr>
+                        <tr>
+                          <th>Dq</th>
+                          <td id="resdq"></td>
+                        </tr>
+                        <tr>
+                          <th>D&gamma;</th>
+                          <td id="resdy"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-2">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-asentamiento" role="tabpanel" aria-labelledby="nav-asentamiento-tab">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>window.jQuery = window.$ = require('jquery');</script>
+    <script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./src/js/tablas.js"></script>
+    <script src="./src/js/canvas.js"></script>
+    <script src="./src/js/index.js"></script>
+    <script src="./src/js/calculos.js"></script>
+
+  </body>
+</html>
