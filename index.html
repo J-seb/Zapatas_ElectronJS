@@ -15,12 +15,12 @@
   </div>
   <div class="row m-0">
     <div class="col-lg-6 p-0">
-      <canvas id="canvas2d" width="600" height="450">
+      <canvas id="canvas2d" width="600" height="480">
 
       </canvas>
     </div>
     <div class="col-lg-6 p-0">
-      <canvas id="canvas3d" width="600" height="450">
+      <canvas id="canvas3d" width="600" height="480">
 
       </canvas>
     </div>
@@ -56,7 +56,7 @@
     
                     <div class="row g-2 mt-1 mb-1">
                       <div class="form-floating col-lg-4 offset-lg-1">
-                        <input type="number" step="0.001" class="form-control datos-suelos" id="gammasat" placeholder="&gamma;(sat): [kN/m³]" name="gamma-sat">
+                        <input type="number" step="0.001" required class="form-control datos-suelos" id="gammasat" placeholder="&gamma;(sat): [kN/m³]" name="gamma-sat">
                         <label for="gammsat">&gamma;(sat): [kN/m³]</label>
                       </div>
                       <div class="form-floating col-lg-4 offset-lg-2">
@@ -100,8 +100,13 @@
 
                     <div class="row g-2 mt-1 mb-1">
                       <div class="form-floating col-lg-4 offset-lg-1">
-                        <input type="text" class="form-control datos-suelos" id="nombre" placeholder="Nombre:" name="nombre">
-                        <label for="nombre" class="ml-5">Nombre: </label>
+                        <select class="form-select datos-suelos" id="nombre" name="nombre">
+                          <option value="Arena">Arena</option>
+                          <option value="Arcilla">Arcilla</option>
+                          <option value="Grava">Grava</option>
+                          <option value="Limo">Limo</option>
+                        </select>
+                        <label for="nombre" class="ml-5">Tipo: </label>
                       </div>
                       <div class="form-floating col-lg-4 offset-lg-2">
                         <input type="color" class="form-control datos-suelos" id="color" placeholder="Color:" name="color">
@@ -209,7 +214,7 @@
               </div>
               <div class="row g-2 mt-3 mb-1">
                 <div class="form-floating">
-                  <input type="number" step="0.001" class="form-control datos-iniciales" id="fs" placeholder="FS: " name="fs">
+                  <input type="number" step="0.001" class="form-control datos-iniciales" required id="fs" placeholder="FS: " name="fs">
                   <label for="fs" class="ml-5">FS: </label>
                 </div>
               </div>
@@ -218,7 +223,7 @@
 
           <div class="row mt-4">
             <div class="col-6 offset-3 border rounded pb-4 pt-3">
-              <select class="form-select" id="metodologia">
+              <select class="form-select" id="metodologia" required>
                 <option value="hansen">Metodología de Hansen</option>
                 <option value="meyerhof">Metodología de MeyerHof</option>
                 <option value="terzaghi">Metodología de Terzaghi</option>
@@ -254,7 +259,7 @@
               <div class="row">
                 <div class="col-4">
                   <div class="row">
-                    <div class="col-10 offset-1">
+                    <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados2">
                         <tr>
                           <th>Nc</th>
@@ -274,7 +279,7 @@
                 </div>
                 <div class="col-4">
                   <div class="row">
-                    <div class="col-10 offset-1">
+                    <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados3">
                         <tr>
                           <th>Sc</th>
@@ -294,7 +299,7 @@
                 </div>
                 <div class="col-4">
                   <div class="row">
-                    <div class="col-10 offset-1">
+                    <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
                         <tr>
                           <th>Dc</th>
@@ -314,11 +319,94 @@
                 </div>
               </div>
               <div class="row mt-2">
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>Cprom</th>
+                          <td id="rescprom"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>&gamma;prom</th>
+                          <td id="resyprom"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>q</th>
+                          <td id="resq"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row mt-2">
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>qult</th>
+                          <td id="resqult"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>qadm[kN/m³]</th>
+                          <td id="resqadmkn"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-10">
+                      <table class="table table-hover text-center table-bordered" id="tabla-resultados4">
+                        <tr>
+                          <th>qadm[Ton]</th>
+                          <td id="resqadmt"></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
 
               </div>
             </div>
           </div>
         </div>
+
+
+
         <div class="tab-pane fade" id="nav-asentamiento" role="tabpanel" aria-labelledby="nav-asentamiento-tab">
 
         </div>
@@ -326,9 +414,38 @@
     </div>
   </div>
 
-    <script>window.jQuery = window.$ = require('jquery');</script>
+  <!--<div id="modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header mx-3">
+          <h5 class="modal-title">Resultados</h5>
+        </div>
+        <div class="modal-body mx-3">
+          <p id="textoFinal"></p>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="boton-cerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>-->
+
+  
+  <!--<div id="toast-prueba">
+    <div role="alert" class="toast hide" style="position: absolute; top: 1%; left: 35%;" data-bs-autohide="false">
+      <div class="d-flex mx-3">
+        <div class="toast-body">
+          Por favor, ingrese datos completos de zapata en la pestaña 'Datos Iniciales'
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>-->
+
+    <script id="primer-script">window.jQuery = window.$ = require('jquery');</script>
     <script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./src/js/dom.js"></script>
     <script src="./src/js/tablas.js"></script>
     <script src="./src/js/canvas.js"></script>
     <script src="./src/js/index.js"></script>

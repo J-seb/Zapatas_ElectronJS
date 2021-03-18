@@ -142,6 +142,6 @@ const resetForm = () => {
     eo.value = ''
     cc.value = ''
     cs.value = ''
-    nombre.value = ''
+    nombre.value = 'Arena'
     color.value = '#000000'
 }

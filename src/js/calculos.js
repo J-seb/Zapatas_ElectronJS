@@ -1,3 +1,4 @@
+const Bootstrap = require('bootstrap');
 // Declaramos dos variables globales mas
 // datosIniciales será un objeto que guardará los datos iniciales de la zapata entre otros.
 // Cálculos tabla es el array de objetos para mostrar resultados
@@ -20,9 +21,20 @@ const tDC = document.querySelector('#resdc')
 const tDQ = document.querySelector('#resdq')
 const tDY = document.querySelector('#resdy')
 
+// Campos para mostrar resultados finales de capacidad
+
+const tcprom = document.querySelector('#rescprom')
+const typrom = document.querySelector('#resyprom')
+const tq = document.querySelector('#resq')
+const tqult = document.querySelector('#resqult')
+const tqadmkn = document.querySelector('#resqadmkn')
+const tqadmt= document.querySelector('#resqadmt')
+
 // Seleccción de Metodología
 
 const sel = document.querySelector('#metodologia')
+
+// Apuntamos al div correspondiente al modal en el DOM
 
 // Evento click en botón PLAY
 
@@ -44,33 +56,52 @@ botonCalcular.addEventListener('click', () => {
     calculosTabla = []
     datosIniciales = {}
     const met = sel.value
+    let pMet = {}
+
+    crearToast()
+
     document.querySelectorAll('.datos-iniciales').forEach((dato) => {
         datosIniciales[dato.name] = parseFloat(dato.value)
     })
-    const {phiProm, hC} = calcular(datosIniciales)
 
-    renderDatos('#resultados', calculosTabla)
-  
-    if (met === 'hansen') {
-        const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularHansen(phiProm)
-        mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
-    } else if (met === 'meyerhof') {
-        const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularMeyerhof(phiProm)
-        mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+    if (Object.values(datosIniciales).includes(NaN)) {
+        toastNoDatosIniciales()
     } else {
-        const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularTerzaghi(phiProm)
-        mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+        const {phiProm, hC} = calcular(datosIniciales)
+
+        renderDatos('#resultados', calculosTabla)
+    
+        if (met === 'hansen') {
+            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularHansen(phiProm)
+            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+        } else if (met === 'meyerhof') {
+            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularMeyerhof(phiProm)
+            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+        } else {
+            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularTerzaghi(phiProm)
+            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+        }
+
+        const cProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'cohesion')
+        const {qProm, yProm} = calcularQY(hC)
+
+        const {qUlt, qAdmN, qAdmT} = calcularQFinal(met, pMet, datosIniciales.b, datosIniciales.l, datosIniciales.fs, cProm, qProm, yProm)
+
+        mostrarParametrosFinales(qUlt, qAdmN, qAdmT, cProm, yProm, qProm)
+
+        graph2d()
+
+        modalFinalZapata(datosIniciales, qAdmT)
+        
+        console.log(cProm)
+        console.log({qProm, yProm})
+        console.log({qUlt, qAdmN, qAdmT})
+
     }
-
-    const cProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'cohesion')
-
-    const {qProm, yProm} = calcularQY(hC)
     
-    graph2d()
-    
-    console.log(cProm)
-    console.log({qProm, yProm})
-
 })
 
 // Cálculo de parámetros iterativos
@@ -285,37 +316,68 @@ const calcularQY = (hC) => {
     const nf = parseFloat(datosIniciales.nf)
     const df = parseFloat(datosIniciales.df)
     const hc = parseFloat(hC)
-
-    let qProm = 0
-    let yProm = 0
     
     if (d > b) {
         // Caso 3
-        qProm = parseFloat(datos[0]['gamma-h']) * df
-        yProm = calcularProm(datos, df, df + hc, 'gamma-h')
+        const qProm = parseFloat(datos[0]['gamma-h']) * df
+        const yProm = calcularProm(datos, df, df + hc, 'gamma-h')
+
+        return {qProm, yProm}
         
     } else if (nf < df) {
         // Caso 1
+        console.log('Entramos a caso I')
         const yH = parseFloat(datos[0]['gamma-h'])
         const d1 = parseFloat(datos[0].espesor)
         const y = parseFloat(datos[1]['gamma-sat']) - 9.81
         const d2 = df - d1
-        qProm = yH * d1 + y * d2
-        yProm = calcularProm(datos, hC, datosIniciales, 'gammaSat')
+        
+        const qProm = yH * d1 + y * d2
+        const yProm = calcularProm(datos, df, df + hc, 'gamma-sat')
+
+        return {qProm, yProm}
+
     } else if (nf > df) {
         // Caso 2
 
         console.log('Entramos a caso 2')
-        qProm = calcularProm(datos, 0.000001, df, 'gamma-h')
+        const qProm = calcularProm(datos, 0.000001, df, 'gamma-h')
 
         console.log(qProm)
-        ymProm = calcularProm(datos, df, nf, 'gamma-h')
-        ypProm = calcularProm(datos, nf, df + hc, 'gamma-sat')
+        const ymProm = calcularProm(datos, df, nf, 'gamma-h')
+        const ypProm = calcularProm(datos, nf, df + hc, 'gamma-sat')
 
-        console.log(ymProm)
-        console.log(ypProm)
-        yProm = parseFloat(ypProm) + d/b * (parseFloat(ymProm) - parseFloat(ypProm))
+        const yProm = parseFloat(ypProm) + d/b * (parseFloat(ymProm) - parseFloat(ypProm))
 
         return {qProm, yProm}
     }
+}
+
+const calcularQFinal = (metodologia, resMet, b, l, fs, cProm, qProm, yProm) => {
+    const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = resMet
+    let qUlt = 0
+    if (metodologia === 'terzaghi') {
+        qUlt = parseFloat(cProm * nC * sC) + parseFloat(qProm * nQ) + parseFloat(0.5 * yProm * b * nY * sY)
+        console.log(cProm * nC * sC)
+        console.log(qProm * nQ)
+        console.log(0.5 * yProm * b * nY * sY)
+        
+    } else {
+        qUlt = parseFloat(cProm * nC * dC * sC) + parseFloat(qProm * nQ * sQ * dQ) + parseFloat(0.5 * yProm * b * nY * sY * dY)
+    }
+    const qAdmN = qUlt / fs
+    const qAdmT = qAdmN * l * b / 9.81
+    return {qUlt, qAdmN, qAdmT}
+}
+
+const mostrarParametrosFinales = (qUlt, qAdmN, qAdmT, cProm, yProm, qProm) => {
+
+    tcprom.textContent = cProm.toFixed(3)
+    typrom.textContent = yProm.toFixed(3)
+    tq.textContent = qProm.toFixed(3)
+
+    tqult.textContent = qUlt.toFixed(3)
+    tqadmkn.textContent = qAdmN.toFixed(3)
+    tqadmt.textContent = qAdmT.toFixed(3)
+
 }

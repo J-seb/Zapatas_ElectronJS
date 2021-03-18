@@ -11,7 +11,7 @@ const graph2d = () => {
         if (datos.length === 0) {
             eGraph(ctx, 310, 70, '#795548', 100, 'Arena', 'H1')
             eGraph(ctx, 310, 170, '#ff9800', 140, 'Arcilla', 'H2')
-            eGraph(ctx, 310, 310, '#7f2b11', 110, 'Roca', 'H3')
+            eGraph(ctx, 310, 310, '#7f2b11', 110, 'Grava', 'H3')
 
             zGraph(ctx, 310, 70, '#a8a3a3', 200, 250, 40, 240, 50, 'B', 'df', 'd', 'nf')
             flechaVU2D(ctx, 310, 50, 30, 'Carga (Ton)')
@@ -48,6 +48,10 @@ const graph2d = () => {
                 alert('Por favor ingrese datos iniciales para mostrar gráfica 2D')
             }
         }
+        eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
+        text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
+        
+
     } else {
         alert('Canvas is not supported in this app')
     }
@@ -55,6 +59,9 @@ const graph2d = () => {
 }
 
 const zGraph = (ctx, x, y, color, h, b, d, nf, az, sB, sdf, sd, snf) => {
+
+    nivFreatico(ctx, x, y + nf)
+
     ctx.beginPath()
     ctx.moveTo(x + az/2, y - 5)
     
@@ -77,7 +84,6 @@ const zGraph = (ctx, x, y, color, h, b, d, nf, az, sB, sdf, sd, snf) => {
     cGraphV(ctx, d, x - 270, y + h, sd)
     cGraphV(ctx, nf, x - 290, y, snf)
 
-    nivFreatico(ctx, x, y + nf)
 }
 
 const eGraph = (ctx, x, y, color, h, tipoSuelo, vCota) => {
