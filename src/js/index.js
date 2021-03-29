@@ -73,9 +73,9 @@ const seleccionarElemento = (capa) => {
     botonEditar.removeAttribute("disabled")
     botonEliminar.removeAttribute("disabled")
     
-    gammaH.value = elemento["gamma-h"]
+    gammaH.value = elemento["gammah"]
     cohesion.value = elemento["cohesion"]
-    gammaSat.value = elemento["gamma-sat"]
+    gammaSat.value = elemento["gammasat"]
     es.value = elemento["es"]
     phi.value = elemento["phi"]
     espesor.value = elemento["espesor"]

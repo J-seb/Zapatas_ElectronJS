@@ -15,7 +15,7 @@ const crearToast = () => {
 
     const toastBody = document.createElement('div')
     toastBody.setAttribute('class', 'toast-body')
-    toastBody.textContent = 'Por favor, ingrese datos completos de zapata en la pestaña "Datos Iniciales"'
+    toastBody.textContent = 'Por favor, ingrese datos de suelos y de zapata'
 
     const closeButton = document.createElement('button')
     closeButton.setAttribute('type', 'button')

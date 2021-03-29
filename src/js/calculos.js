@@ -1,4 +1,5 @@
 const Bootstrap = require('bootstrap');
+
 // Declaramos dos variables globales mas
 // datosIniciales será un objeto que guardará los datos iniciales de la zapata entre otros.
 // Cálculos tabla es el array de objetos para mostrar resultados
@@ -34,7 +35,15 @@ const tqadmt= document.querySelector('#resqadmt')
 
 const sel = document.querySelector('#metodologia')
 
-// Apuntamos al div correspondiente al modal en el DOM
+// Apuntamos a los campos de los valores totales para asentamientos
+
+const totalElasticosCentro = document.querySelector('#totalElasticosCentro')
+const totalElasticosEsquina = document.querySelector('#totalElasticosEsquina')
+const totalConsolidados = document.querySelector('#totalConsolidados')
+
+const totalAsentamientos = document.querySelector('#totalasen')
+const zAsent = document.querySelector('#zeta')
+const infAsent = document.querySelector('#influencia')
 
 // Evento click en botón PLAY
 
@@ -64,7 +73,7 @@ botonCalcular.addEventListener('click', () => {
         datosIniciales[dato.name] = parseFloat(dato.value)
     })
 
-    if (Object.values(datosIniciales).includes(NaN)) {
+    if (Object.values(datosIniciales).includes(NaN) || datos.length === 0) {
         toastNoDatosIniciales()
     } else {
         const {phiProm, hC} = calcular(datosIniciales)
@@ -95,10 +104,13 @@ botonCalcular.addEventListener('click', () => {
         graph2d()
 
         modalFinalZapata(datosIniciales, qAdmT)
-        
-        console.log(cProm)
-        console.log({qProm, yProm})
-        console.log({qUlt, qAdmN, qAdmT})
+
+        const {z, i} = calcularZ(datosIniciales.l, datosIniciales.b)
+
+        const {arrayElasticosCentro, arrayElasticosEsquina} = calcularAsentamientosElasticos(datos, datosIniciales, z)
+        const arrayConsolidados = calcularAsentamientosConsolidados(datos, datosIniciales, z)
+
+        mostrarAsentamientos(arrayElasticosCentro, arrayElasticosEsquina, arrayConsolidados, datos, z, i)
 
     }
     
@@ -132,18 +144,18 @@ const calcularProm = (suelos, inicio, fin, param) => {
 
     const limiteSuperior = parseFloat(inicio)
     const limiteInferior = parseFloat(fin)
-    
-    console.log(limiteSuperior)
-    console.log(limiteInferior)
 
     let arrayParams = []
-    if (param === 'gamma-sat') {
-        arrayParams = suelos.map(suelo => parseFloat(suelo[param]) - 9.81)
-    } else {
-        arrayParams = suelos.map(suelo => parseFloat(suelo[param]))
+    if (param === 'gammasat') {
+        arrayParams = suelos.map(suelo => suelo.gammasat ? parseFloat(suelo.gammasat) - 9.81: 0)
+        // El problema es porque cuando no hay nada puesto se llena con NaN
+    } else if (param === 'gammah') {
+        arrayParams = suelos.map(suelo => suelo.gammah ? parseFloat(suelo.gammah) : 0)
+    } else if (param === 'phi') {
+        arrayParams = suelos.map(suelo => suelo.phi ? parseFloat(suelo.phi) : 0)
+    } else if (param === 'cohesion') {
+        arrayParams = suelos.map(suelo => suelo.cohesion ? parseFloat(suelo.cohesion) : 0)
     }
-
-    console.log(arrayParams)
 
     const cotas = [0]
     let acum = 0
@@ -319,21 +331,21 @@ const calcularQY = (hC) => {
     
     if (d > b) {
         // Caso 3
-        const qProm = parseFloat(datos[0]['gamma-h']) * df
-        const yProm = calcularProm(datos, df, df + hc, 'gamma-h')
+        const qProm = parseFloat(datos[0].gammah) * df
+        const yProm = calcularProm(datos, df, df + hc, 'gammah')
 
         return {qProm, yProm}
         
     } else if (nf < df) {
         // Caso 1
         console.log('Entramos a caso I')
-        const yH = parseFloat(datos[0]['gamma-h'])
+        const yH = parseFloat(datos[0].gammah)
         const d1 = parseFloat(datos[0].espesor)
-        const y = parseFloat(datos[1]['gamma-sat']) - 9.81
+        const y = parseFloat(datos[1].gammasat) - 9.81
         const d2 = df - d1
         
         const qProm = yH * d1 + y * d2
-        const yProm = calcularProm(datos, df, df + hc, 'gamma-sat')
+        const yProm = calcularProm(datos, df, df + hc, 'gammasat')
 
         return {qProm, yProm}
 
@@ -341,11 +353,10 @@ const calcularQY = (hC) => {
         // Caso 2
 
         console.log('Entramos a caso 2')
-        const qProm = calcularProm(datos, 0.000001, df, 'gamma-h')
+        const qProm = calcularProm(datos, 0.000001, df, 'gammah')
 
-        console.log(qProm)
-        const ymProm = calcularProm(datos, df, nf, 'gamma-h')
-        const ypProm = calcularProm(datos, nf, df + hc, 'gamma-sat')
+        const ymProm = calcularProm(datos, df, nf, 'gammah')
+        const ypProm = calcularProm(datos, nf, df + hc, 'gammasat')
 
         const yProm = parseFloat(ypProm) + d/b * (parseFloat(ymProm) - parseFloat(ypProm))
 
@@ -358,10 +369,6 @@ const calcularQFinal = (metodologia, resMet, b, l, fs, cProm, qProm, yProm) => {
     let qUlt = 0
     if (metodologia === 'terzaghi') {
         qUlt = parseFloat(cProm * nC * sC) + parseFloat(qProm * nQ) + parseFloat(0.5 * yProm * b * nY * sY)
-        console.log(cProm * nC * sC)
-        console.log(qProm * nQ)
-        console.log(0.5 * yProm * b * nY * sY)
-        
     } else {
         qUlt = parseFloat(cProm * nC * dC * sC) + parseFloat(qProm * nQ * sQ * dQ) + parseFloat(0.5 * yProm * b * nY * sY * dY)
     }
@@ -379,5 +386,54 @@ const mostrarParametrosFinales = (qUlt, qAdmN, qAdmT, cProm, yProm, qProm) => {
     tqult.textContent = qUlt.toFixed(3)
     tqadmkn.textContent = qAdmN.toFixed(3)
     tqadmt.textContent = qAdmT.toFixed(3)
+
+}
+
+const mostrarAsentamientos = (elasticosCentro, elasticosEsquina, consolidados, suelos, z, influencia) => {
+    let sumaCentro = 0
+    let sumaEsquina = 0
+    let sumaConsolidados = 0
+    let arrayDatos = []
+
+    const inicialElasticos = elasticosCentro.length
+    const inicialConsolidados = consolidados.length
+
+    console.log({elasticosCentro, elasticosEsquina, consolidados})
+
+    elasticosCentro.forEach((elastico) => sumaCentro = sumaCentro + parseFloat(elastico))
+    elasticosEsquina.forEach((elastico) => sumaEsquina = sumaEsquina + parseFloat(elastico))
+    consolidados.forEach((consolidado) => sumaConsolidados = sumaConsolidados + parseFloat(consolidado))
+
+    for (let i = 0; i < suelos.length - inicialElasticos ; i++) {
+        elasticosCentro.push("-")
+        elasticosEsquina.push("-")
+    }
+
+    for (let i = 0; i < suelos.length - inicialConsolidados ; i++) {
+        consolidados.unshift("-")
+    }
+
+    for (let i = 0; i < suelos.length; i++) {
+
+        let _id = uuidv4()
+        let centro = elasticosCentro[i].toString()
+        let esquina = elasticosEsquina[i].toString()
+        let consolidado = consolidados[i].toString()
+
+        arrayDatos.push({_id, centro, esquina, consolidado})
+    }
+
+    console.log({arrayDatos})
+    console.log({sumaCentro, sumaEsquina, sumaConsolidados})
+
+    renderDatos('#resultados-asentamientos', arrayDatos)
+    
+    totalElasticosCentro.textContent = sumaCentro.toFixed(4)
+    totalElasticosEsquina.textContent = sumaEsquina.toFixed(4)
+    totalConsolidados.textContent = sumaConsolidados.toFixed(4)
+
+    totalAsentamientos.textContent = (sumaCentro + sumaConsolidados).toFixed(4)
+    zAsent.textContent = z
+    infAsent.textContent = influencia
 
 }
