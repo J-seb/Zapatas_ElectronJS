@@ -6,7 +6,7 @@ const graph2d = () => {
 
         //Limpiamos el Canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        text(ctx, 'Modelo 2D Zapata', 20, 30, 18)
+        
 
         if (datos.length === 0) {
             eGraph(ctx, 310, 70, '#795548', 100, 'Arena', 'H1')
@@ -15,6 +15,10 @@ const graph2d = () => {
 
             zGraph(ctx, 310, 70, '#a8a3a3', 200, 250, 40, 240, 50, 'B', 'df', 'd', 'nf')
             flechaVU2D(ctx, 310, 50, 30, 'Carga (Ton)')
+
+            eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
+            text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
+
         } else {
             // Ancho Total Estratos = 500px
             // Alto Total Estratos =  350px
@@ -47,15 +51,13 @@ const graph2d = () => {
             else {
                 alert('Por favor ingrese datos iniciales para mostrar gráfica 2D')
             }
-        }
-        eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
-        text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
-        
 
+            eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
+            text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
+        }      
     } else {
         alert('Canvas is not supported in this app')
     }
-    
 }
 
 const zGraph = (ctx, x, y, color, h, b, d, nf, az, sB, sdf, sd, snf) => {

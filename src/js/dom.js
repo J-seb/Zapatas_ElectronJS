@@ -1,4 +1,5 @@
 // Toast
+let message = ''
 
 const crearToast = () => {
     const body = document.querySelector('body')
@@ -113,7 +114,7 @@ const eliminarModal = () => {
     modal.remove()
 }
 
-const modalFinalZapata = (datosZapata, qAdmT) => {
+const modalFinalZapata = (datosZapata, qAdmT, tAsentamientos) => {
     crearModal()
 
     const miModal = document.querySelector('.modal')
@@ -125,13 +126,41 @@ const modalFinalZapata = (datosZapata, qAdmT) => {
     const bodyModal = document.querySelector('#textoFinal')
     bodyModal.innerHTML = ''
 
-    if (1.1 * qload < qadm) {
-        bodyModal.innerHTML = '<br><p style="color: green; text-align: center;"><i class="fa fa-check-circle fa-5x"></i></p><br><br>Los cálculos indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas con amplio margen.<br><br>Por tanto, se establece con seguridad que el diseño de la zapata es el adecuado para los estratos ingresados y la carga respectiva.'
-    } else if (qload < qadm) {
-        bodyModal.innerHTML = '<br><p style="color: yellow; text-align: center;"><i class="fa fa-exclamation-triangle fa-5x"></i></p><br><br>Los cálculos indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas.<br><br>Sin embargo, se recomienda cambiar ligeramente las dimensiones con el objetivo de tener un margen de carga mayor entre la ingresada y la calculada'
+    if (tAsentamientos < 30) {
+        if (1.1 * qload < qadm) {
+            const m1 = 'Los cálculos de capacidad portante indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas con amplio margen. '
+            const m2 = 'Por tanto, se establece con seguridad que el diseño de la zapata es el adecuado para los estratos ingresados y la carga respectiva. '
+            const m3 = 'Por otro lado, los resultados de asentamientos nos indican que el desplazamiento de la carga es menor al máximo permitido de 30cm.'
+    
+            bodyModal.innerHTML = '<br><p style="color: green; text-align: center;"><i class="fa fa-check-circle fa-5x"></i></p><br><br>' + m1 + '<br><br>' + m2 + '<br><br>' + m3
+
+            message = m1 + m2 + m3
+    
+    
+        } else if (qload < qadm) {
+            const m1 = 'Los cálculos indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas. '
+            const m2 = 'Sin embargo, se recomienda cambiar ligeramente las dimensiones con el objetivo de tener un margen de carga mayor entre la ingresada y la calculada. '
+            const m3 = 'Por otro lado, los resultados de asentamientos nos indican que el desplazamiento de la carga es menor al máximo permitido de 30cm'
+    
+            bodyModal.innerHTML = '<br><p style="color: yellow; text-align: center;"><i class="fa fa-exclamation-triangle fa-5x"></i></p><br><br>' + m1 + '<br><br>' + m2 + '<br><br>' + m3
+
+            message = m1 + m2 + m3
+    
+        } else {
+            const m1 = 'Los cálculos indican que las dimensiones de la zapata no cumplen con la carga mínima ingresada, por tanto es necesario cambiar sus medidas y recalcular. '
+
+            bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><br>' + m1
+
+            message = m1
+        }
     } else {
-        bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><br>Los cálculos indican que las dimensiones de la zapata no cumplen con la carga mínima ingresada, por tanto es necesario cambiar sus medidas y recalcular.'
+        const m1 = 'Los cálculos de asentamientos indican que los suelos no son aptos para construcción, ya que el desplazamiento de la carga bajo las condiciones de suelos, carga y dimensiones de la zapata es mayor a 30 cm. '
+
+        bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><br>' + m1
+
+        message = m1
     }
+    
 
     modal.show()
     miModal.addEventListener('hidden.bs.modal', (e) => {

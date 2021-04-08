@@ -5,7 +5,6 @@ const DOMDatos = (dato, index) => {
     let fila = document.createElement('tr')
 
     valores.forEach(valor => {
-        console.log(valor)
         if (!valor.includes('#')){
             const celda = document.createElement('td')
             if (valor.length > 8)

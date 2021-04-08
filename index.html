@@ -8,25 +8,33 @@
     <link rel="stylesheet" href="./src/css/styles.css">
 </head>
 <body>
-  <div class="row">
-    <div class="col-12">
-      <button class="btn fa fa-play" id="calcular"></button>
+  <div class="row m-0">
+    <div class="col-1 text-center my-1">
+      <button class="btn" id="calcular"><i class="fa fa-play fa-2x"></i><p class="m-0">Calcular</p></button>
+    </div>
+    <div class="col-2 d-flex align-items-center my-1">
+      <button class="btn btn-outline-success" id="exportar" disabled>Exportar a PDF</button>
     </div>
   </div>
+  <hr class="m-0">
   <div class="row m-0">
-    <div class="col-lg-6 p-0">
-      <canvas id="canvas2d" width="600" height="480">
+    <div class="col-6 text-center my-4"><h4>Modelo 2D</h3></div>
+    <div class="col-6 text-center my-4"><h4>Modelo 3D</h3></div>
+  </div>
+  <div class="row m-0">
+    <div class="col-lg-6 align-items-center">
+      <canvas id="canvas2d" width="600" height="480" class="canvas-zapata">
 
       </canvas>
     </div>
-    <div class="col-lg-6 p-0" id="canvas3d">
-      <!--<canvas id="canvas3dd" width="600" height="480">
-
-      </canvas>-->
+    <div class="col-lg-6 align-items-center">
+      <div id="canvas3d" class="p-0 canvas-zapata">
+        
+      </div>
     </div>
   </div>
   <!-- NAV-TAB-->
-  <div class="row">
+  <div class="row m-0 mt-5">
     <div class="col-12">
       <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -39,7 +47,7 @@
       <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-suelos" role="tabpanel" aria-labelledby="nav-suelos-tab">
           <div class="row">
-            <div class="col-lg-6 mt-4">
+            <div class="col-lg-5 mt-4">
               <div class="row">
                 <div class="col-10 offset-1 border rounded pb-4 pt-3">
                   <form id="agregar-elemento">
@@ -49,8 +57,8 @@
                         <label for="gammah">&gamma;(h): [kN/m³]</label>
                       </div>
                       <div class="form-floating col-lg-4 offset-lg-2">
-                        <input type="number" step="0.001" class="form-control datos-suelos" id="cohesion" placeholder="Cohesion: [kN/m²]" name="cohesion">
-                        <label for="cohesion">Cohesión: [kN/m²]</label>
+                        <input type="number" step="0.001" class="form-control datos-suelos" id="cohesion" placeholder="C: [kN/m²]" name="cohesion">
+                        <label for="cohesion">C: [kN/m²]</label>
                       </div>
                     </div>
     
@@ -138,25 +146,25 @@
               </div>           
             </div>
 
-            <div class="col-lg-6 mt-4">
+            <div class="col-lg-7 mt-4">
               <div class="row">
                 <div class="col-11 border rounded pb-4 pt-3 table-responsive">
                   <table class="table table-hover text-center" id="tabla-datos">
                     <thead>
                       <tr class="align-middle">
                         <th scope="col">Est</th>
-                        <th scope="col">&gamma;(h)</th>
-                        <th scope="col">C</th>
-                        <th scope="col">&gamma;(sat)</th>
-                        <th scope="col">Es</th>
-                        <th scope="col">&phi;</th>
-                        <th scope="col">Esp</th>
-                        <th scope="col">&mu;</th>
+                        <th scope="col-1">Y(h) [kN/m³]</th>
+                        <th scope="col">C [kN/m²]</th>
+                        <th scope="col">Y(sat) [kN/m³]</th>
+                        <th scope="col">Es [kN/m²]</th>
+                        <th scope="col">Phi [°]</th>
+                        <th scope="col">Esp [m]</th>
+                        <th scope="col">&micro;</th>
                         <th scope="col">eo</th>
                         <th scope="col">Cc</th>
                         <th scope="col">Cs</th>
-                        <th scope="col">&sigma;c</th>
-                        <th scope="col">Nombre</th>
+                        <th scope="col">Sc</th>
+                        <th scope="col">Tipo</th>
                       </tr>
                     </thead>
                     <tbody id="elementos">
@@ -255,11 +263,11 @@
                     <thead>
                       <tr>
                         <th scope="col">It</th>
-                        <th scope="col">&alpha;</th>
+                        <th scope="col">Alpha</th>
                         <th scope="col">Ro</th>
                         <th scope="col">R</th>
                         <th scope="col">Hc</th>
-                        <th scope="col">&phi;prom</th>
+                        <th scope="col">Phi(prom)</th>
                       </tr>
                     </thead>
                     <tbody id="resultados">
@@ -284,7 +292,7 @@
                           <td id="resnq"></td>
                         </tr>
                         <tr>
-                          <th>N&gamma;</th>
+                          <th>NY</th>
                           <td id="resny"></td>
                         </tr>
                       </table>
@@ -304,7 +312,7 @@
                           <td id="ressq"></td>
                         </tr>
                         <tr>
-                          <th>S&gamma;</th>
+                          <th>SY</th>
                           <td id="ressy"></td>
                         </tr>
                       </table>
@@ -324,7 +332,7 @@
                           <td id="resdq"></td>
                         </tr>
                         <tr>
-                          <th>D&gamma;</th>
+                          <th>DY</th>
                           <td id="resdy"></td>
                         </tr>
                       </table>
@@ -337,8 +345,8 @@
                   <div class="row">
                     <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados5">
-                        <tr>
-                          <th>Cprom</th>
+                        <tr class="align-middle">
+                          <th>Cprom [kN/m²]</th>
                           <td id="rescprom"></td>
                         </tr>
                       </table>
@@ -350,8 +358,8 @@
                   <div class="row">
                     <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados6">
-                        <tr>
-                          <th>&gamma;prom</th>
+                        <tr class="align-middle">
+                          <th>Yprom [kN/m²]</th>
                           <td id="resyprom"></td>
                         </tr>
                       </table>
@@ -363,8 +371,8 @@
                   <div class="row">
                     <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados7">
-                        <tr>
-                          <th>q</th>
+                        <tr class="align-middle">
+                          <th> q  [kN/m²]</th>
                           <td id="resq"></td>
                         </tr>
                       </table>
@@ -393,7 +401,7 @@
                     <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados9">
                         <tr>
-                          <th>qadm[kN/m³]</th>
+                          <th>qadm [kN/m³]</th>
                           <td id="resqadmkn"></td>
                         </tr>
                       </table>
@@ -406,7 +414,7 @@
                     <div class="col-10">
                       <table class="table table-hover text-center table-bordered" id="tabla-resultados10">
                         <tr>
-                          <th>qadm[Ton]</th>
+                          <th>qadm [Ton]</th>
                           <td id="resqadmt"></td>
                         </tr>
                       </table>
@@ -452,7 +460,7 @@
             <div class="col-4">
               <div class="row">
                 <div class="col-9 offset-2">
-                    <table class="table table-hover text-center table-bordered">
+                    <table class="table table-hover text-center table-bordered" id="tabla-resultados11">
                     <tr>
                       <th>Asentamientos [cm]</th>
                       <td id="totalasen"></td>
@@ -465,7 +473,7 @@
             <div class="col-4">
               <div class="row">
                 <div class="col-9 offset-1">
-                    <table class="table table-hover text-center table-bordered">
+                    <table class="table table-hover text-center table-bordered" id="tabla-resultados12">
                     <tr>
                       <th>Z [m]</th>
                       <td id="zeta"></td>
@@ -478,7 +486,7 @@
             <div class="col-4">
               <div class="row">
                 <div class="col-9 offset-1">
-                    <table class="table table-hover text-center table-bordered">
+                    <table class="table table-hover text-center table-bordered" id="tabla-resultados13">
                     <tr>
                       <th>Inf [%]</th>
                       <td id="influencia"></td>
@@ -528,10 +536,16 @@
     <script id="primer-script">window.jQuery = window.$ = require('jquery');</script>
     <script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./src/js/threejs/build/three.js"></script>
+    <script src="./src/js/threejs/js/controls/OrbitControls.js"></script>
+    <!--<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>-->
+    
+    <script src="./src/js/generarPdf.js"></script>
+    <script src="./node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="./src/js/dom.js"></script>
     <script src="./src/js/tablas.js"></script>
     <script src="./src/js/canvas.js"></script>
-    <!--<script src="./src/js/canvas3d.js"></script>-->
+    <script src="./src/js/canvas3d.js"></script>
     <script src="./src/js/index.js"></script>
     <script src="./src/js/calculoInf.js"></script>
     <script src="./src/js/asentamientosConsolidados.js"></script>

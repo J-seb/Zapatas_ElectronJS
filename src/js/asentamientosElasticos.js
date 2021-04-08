@@ -1,3 +1,7 @@
+let arrayParamsElasticosB = []
+let arrayParamsElasticosC = []
+let arrayParamsElasticosE = []
+let contador = 0
 /* const calcularZ = (l, b) => {
     let z = 2 * b
     if (l === b) {
@@ -45,6 +49,10 @@ const calcularElasticos = (datosZapata, suelo, h) => {
     const mp = l / b
     const ifz = datosZapata.iF
 
+    if (arrayParamsElasticosB.length === 0) {
+        arrayParamsElasticosB = [bp, lp, mp]
+    }
+
     const npc = h / (b / 2)
     const npe = h / b
 
@@ -81,6 +89,11 @@ const calcularElasticos = (datosZapata, suelo, h) => {
     const ise = calcularIs(f1e, f2e, mu)
 
     const asenE = (formulaElasticos(q, alphaE, bp, mu, es, ise, ifz) * 100).toFixed(3)
+
+    contador = contador + 1
+
+    arrayParamsElasticosC.push([contador, npc.toFixed(3), alphaC.toFixed(3), a0c.toFixed(3), a1c.toFixed(3), a2c.toFixed(3), f1c.toFixed(3), f2c.toFixed(3), isc.toFixed(3)])
+    arrayParamsElasticosE.push([contador, npe.toFixed(3), alphaE.toFixed(3), a0e.toFixed(3), a1e.toFixed(3), a2e.toFixed(3), f1e.toFixed(3), f2e.toFixed(3), ise.toFixed(3)])
 
     return {asenC, asenE}
     

@@ -32,6 +32,7 @@ const botonEliminar = document.querySelector('#boton-eliminar')
 
 // Crear suelos (ver canvas.js)
 graph2d()
+init(undefined, undefined)
 
 // Cuando se haga submit al formulario, vamos a ejecutar lo que necesitemos
 // Creamos un objeto vacío al cual vamos a llenar luego con los datos del formulario

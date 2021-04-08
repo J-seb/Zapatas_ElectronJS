@@ -34,6 +34,7 @@ const tqadmt= document.querySelector('#resqadmt')
 // Seleccción de Metodología
 
 const sel = document.querySelector('#metodologia')
+let met = ''
 
 // Apuntamos a los campos de los valores totales para asentamientos
 
@@ -44,6 +45,10 @@ const totalConsolidados = document.querySelector('#totalConsolidados')
 const totalAsentamientos = document.querySelector('#totalasen')
 const zAsent = document.querySelector('#zeta')
 const infAsent = document.querySelector('#influencia')
+
+// Botón de exportar a PDF
+
+const botonPDF = document.querySelector('#exportar')
 
 // Evento click en botón PLAY
 
@@ -62,9 +67,7 @@ const infAsent = document.querySelector('#influencia')
 // ******* Determinar la factibilidad de los datos de zapata ***********
 
 botonCalcular.addEventListener('click', () => {
-    calculosTabla = []
-    datosIniciales = {}
-    const met = sel.value
+    met = sel.value
     let pMet = {}
 
     crearToast()
@@ -102,16 +105,18 @@ botonCalcular.addEventListener('click', () => {
         mostrarParametrosFinales(qUlt, qAdmN, qAdmT, cProm, yProm, qProm)
 
         graph2d()
-
-        modalFinalZapata(datosIniciales, qAdmT)
+        init(datos, datosIniciales)
 
         const {z, i} = calcularZ(datosIniciales.l, datosIniciales.b)
 
         const {arrayElasticosCentro, arrayElasticosEsquina} = calcularAsentamientosElasticos(datos, datosIniciales, z)
         const arrayConsolidados = calcularAsentamientosConsolidados(datos, datosIniciales, z)
 
-        mostrarAsentamientos(arrayElasticosCentro, arrayElasticosEsquina, arrayConsolidados, datos, z, i)
+        const tAsentamientos = mostrarAsentamientos(arrayElasticosCentro, arrayElasticosEsquina, arrayConsolidados, datos, z, i)
 
+        modalFinalZapata(datosIniciales, qAdmT, tAsentamientos)
+
+        habilitarBotonPDF()
     }
     
 })
@@ -436,4 +441,10 @@ const mostrarAsentamientos = (elasticosCentro, elasticosEsquina, consolidados, s
     zAsent.textContent = z
     infAsent.textContent = influencia
 
+    return sumaCentro + sumaConsolidados
+
+}
+
+const habilitarBotonPDF = () => {
+    botonPDF.removeAttribute("disabled")
 }

@@ -1,3 +1,5 @@
+let arrayParamsConsolidados = []
+
 const asentamientoNC = (suelo, deltaProm, sigma0) => {
     const cc = parseFloat(suelo.cc)
     const e0 = parseFloat(suelo.eo)
@@ -63,6 +65,7 @@ const calcularSigmaDeltas = (pos, suelos, z, datosIniciales) => {
 
     } else if (cotas[pos] > nuevoZ) {
         sigma0 = 0
+
     } else if (cotas[pos + 1] < nuevoZ) {
 
         sigma0 = parseFloat(suelos[pos].espesor) / 2 * (parseFloat(suelos[pos].gammasat) - 9.81)
@@ -83,6 +86,8 @@ const calcularSigmaDeltas = (pos, suelos, z, datosIniciales) => {
     }
 
     const deltaProm = (deltaSup + 4 * deltaMed + deltaInf) / 6
+
+    arrayParamsConsolidados.push([pos + 1, sigma0.toFixed(3), deltaInf.toFixed(3), deltaMed.toFixed(3), deltaSup.toFixed(3), deltaProm.toFixed(3)])
 
     return {sigma0, deltaProm}
 }
