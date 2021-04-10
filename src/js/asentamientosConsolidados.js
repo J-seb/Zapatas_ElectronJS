@@ -115,12 +115,12 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
             
                 const consolidado = asentamientoNC(suelos[i], deltaProm, sigma0) * 100
                 arrayConsolidados.push(consolidado.toFixed(4))
-            } else if (suelos[i].cs && !suelos[i].cc || (sigma0 + deltaProm <= sigmaC)) {
+            } else if (suelos[i].cs && !suelos[i].cc || (sigma0 + deltaProm <= datosIniciales.sigmac)) {
                 // Asentamiento sobre consolidado caso I
                 
                 const consolidado = asentamientoSC1(suelos[i], deltaProm, sigma0) * 100
                 arrayConsolidados.push(consolidado.toFixed(4))
-            } else if (suelos[i].cc && suelos[i].cs || (sigma0 + deltaProm > sigmaC)) {
+            } else if (suelos[i].cc && suelos[i].cs || (sigma0 + deltaProm > datosIniciales.sigmac)) {
                 // Asentamiento sobre consolidado caso II
                 
                 const consolidado = asentamientoSC2(suelos[i], deltaProm, sigma0) * 100

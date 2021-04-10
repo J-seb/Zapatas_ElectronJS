@@ -1,5 +1,27 @@
 const { jsPDF } = require("jspdf")
+const path = require('path')
+const fs = require('fs')
 require('jspdf-autotable')
+
+const generateNewName = () => {
+    const files = fs.readdirSync(__dirname)
+    let arrayIndex = []
+    if (files) {
+        files.forEach((file) => {
+            if (file.includes('zapatas')) {
+                const ext = file.indexOf('.pdf')
+                const num = parseInt(file.slice(7, ext))
+                arrayIndex.push(num)
+            }
+        })
+        if (arrayIndex.length > 0) {
+            arrayIndex.sort((a, b) => a - b)
+            return 'zapatas' + (arrayIndex[arrayIndex.length - 1] + 1).toString() + '.pdf'
+        } else {
+            return 'zapatas1.pdf'
+        }
+    }
+}
 
 const crearPDF = () => {
 
@@ -414,10 +436,10 @@ const crearPDF = () => {
         maxWidth: 210 - 32
     })
 
-    doc.save("a4.pdf")
+    doc.save(generateNewName())
 
 }
-//crearPDF()
+
 
 const button = document.querySelector('#exportar')
 
