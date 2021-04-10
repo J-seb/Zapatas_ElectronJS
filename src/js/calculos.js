@@ -67,6 +67,8 @@ const botonPDF = document.querySelector('#exportar')
 // ******* Determinar la factibilidad de los datos de zapata ***********
 
 botonCalcular.addEventListener('click', () => {
+    datosIniciales = {}
+    calculosTabla = []
     met = sel.value
     let pMet = {}
 
