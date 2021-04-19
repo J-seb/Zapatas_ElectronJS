@@ -38,6 +38,10 @@ const calcularI = (m, n) => {
 } */
 
 const calcularElasticos = (datosZapata, suelo, h) => {
+    arrayParamsElasticosB = []
+    arrayParamsElasticosC = []
+    arrayParamsElasticosE = []
+    contador = 0
 
     // Constantes iniciales para el cálculo
 
@@ -141,8 +145,10 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
     let cotas = [0]
     let acum = 0
     suelos.forEach((suelo) => {
-        acum = acum + parseFloat(suelo.espesor)
-        cotas.push(acum)
+        if (suelo.gammah) {
+            acum = acum + parseFloat(suelo.espesor)
+            cotas.push(acum)
+        }
     })
 
     const limiteSuperior = datosIniciales.df
@@ -161,15 +167,17 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
         if ((cotas[i] < limiteSuperior) && (cotas[i + 1] >= limiteSuperior) && !calculoSuperior) {
             h = (cotas[i + 1] - limiteSuperior)
 
+            console.log('Entramos a limite superior, el valor de h es: ' + h)
             const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
 
+            console.log({asenC, asenE})
             arrayElasticosCentro.push(asenC)
             arrayElasticosEsquina.push(asenE)
             calculoSuperior = true
 
         } else if ((cotas[i] < limiteInferior) && (cotas[i + 1] >= limiteInferior) && calculoSuperior && !calculoInferior) {
             h = (limiteInferior - cotas[i])
-
+            
             const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
 
             arrayElasticosCentro.push(asenC)

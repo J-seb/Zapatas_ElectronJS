@@ -72,53 +72,77 @@ botonCalcular.addEventListener('click', () => {
     met = sel.value
     let pMet = {}
 
-    crearToast()
+    //crearToast()
 
     document.querySelectorAll('.datos-iniciales').forEach((dato) => {
         datosIniciales[dato.name] = parseFloat(dato.value)
     })
 
+    if (!datosIniciales.phi2) {
+        let acumPhi = 0
+        datos.forEach((dato) => acumPhi = acumPhi + parseFloat(dato.phi))
+        datosIniciales.phi2 = Math.round(acumPhi / datos.length)
+    }
+
+    if (!datosIniciales.nf) {
+        let acumEsp = 0
+        datos.forEach((dato) => acumEsp = acumEsp + parseFloat(dato.espesor))
+        datosIniciales.nf = acumEsp
+    }
+
+    if (!datosIniciales.iF) {
+        datosIniciales.iF = 1
+        //mostrarToast('Advertencia: IF no ingresado, no se garantiza el cálculo de Asentamientos')
+    }
+
     if (Object.values(datosIniciales).includes(NaN) || datos.length === 0) {
-        toastNoDatosIniciales()
+        mostrarToast('Por favor, ingrese datos de suelos y de zapata')
     } else {
-        const {phiProm, hC} = calcular(datosIniciales)
+        try {
+            const {phiProm, hC} = calcular(datosIniciales)
 
-        renderDatos('#resultados', calculosTabla)
-    
-        if (met === 'hansen') {
-            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularHansen(phiProm)
-            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
-            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
-        } else if (met === 'meyerhof') {
-            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularMeyerhof(phiProm)
-            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
-            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
-        } else {
-            const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularTerzaghi(phiProm)
-            mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
-            pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+            renderDatos('#resultados', calculosTabla)
+        
+            if (met === 'hansen') {
+                const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularHansen(phiProm)
+                mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+                pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+            } else if (met === 'meyerhof') {
+                const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularMeyerhof(phiProm)
+                mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+                pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+            } else {
+                const {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY} = calcularTerzaghi(phiProm)
+                mostrarCoeficientes({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY})
+                pMet = {nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}
+            }
+
+            const cProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'cohesion')
+            const {qProm, yProm} = calcularQY(hC)
+
+            const {qUlt, qAdmN, qAdmT} = calcularQFinal(met, pMet, datosIniciales.b, datosIniciales.l, datosIniciales.fs, cProm, qProm, yProm)
+
+            mostrarParametrosFinales(qUlt, qAdmN, qAdmT, cProm, yProm, qProm)
+
+            graph2d()
+            init(datos, datosIniciales)
+
+            const {z, i} = calcularZ(datosIniciales.l, datosIniciales.b)
+
+            const {arrayElasticosCentro, arrayElasticosEsquina} = calcularAsentamientosElasticos(datos, datosIniciales, z)
+            const arrayConsolidados = calcularAsentamientosConsolidados(datos, datosIniciales, z)
+            console.log(arrayConsolidados)
+            const tAsentamientos = mostrarAsentamientos(arrayElasticosCentro, arrayElasticosEsquina, arrayConsolidados, datos, z, i)
+
+            modalFinalZapata(datosIniciales, qAdmT, tAsentamientos)
+
+            habilitarBotonPDF()
+
+        } catch (e) {
+            console.log(e)
+            mostrarToast('Datos incompletos o erróneos, por favor verifique parámetros ingresados')
         }
-
-        const cProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'cohesion')
-        const {qProm, yProm} = calcularQY(hC)
-
-        const {qUlt, qAdmN, qAdmT} = calcularQFinal(met, pMet, datosIniciales.b, datosIniciales.l, datosIniciales.fs, cProm, qProm, yProm)
-
-        mostrarParametrosFinales(qUlt, qAdmN, qAdmT, cProm, yProm, qProm)
-
-        graph2d()
-        init(datos, datosIniciales)
-
-        const {z, i} = calcularZ(datosIniciales.l, datosIniciales.b)
-
-        const {arrayElasticosCentro, arrayElasticosEsquina} = calcularAsentamientosElasticos(datos, datosIniciales, z)
-        const arrayConsolidados = calcularAsentamientosConsolidados(datos, datosIniciales, z)
-
-        const tAsentamientos = mostrarAsentamientos(arrayElasticosCentro, arrayElasticosEsquina, arrayConsolidados, datos, z, i)
-
-        modalFinalZapata(datosIniciales, qAdmT, tAsentamientos)
-
-        habilitarBotonPDF()
+        
     }
     
 })
@@ -145,6 +169,8 @@ const calcularR = (ro, alpha, phi) => {
 const calcularHc = (phi, r) => {
     return hc = Math.cos(phi * Math.PI / 180) * r
 }
+
+//const qProm = calcularProm(datos, 0.000001, df, 'gammah')
 
 // Función para calcular promedios **** IMPORTANTE ****
 const calcularProm = (suelos, inicio, fin, param) => {
@@ -181,19 +207,26 @@ const calcularProm = (suelos, inicio, fin, param) => {
     let calculoSuperior = false
     let calculoInferior = false
 
+    if (limiteSuperior < 0.001) {
+        calculoSuperior = true
+    }
+
     // Comparar con límite superior, inferior y capas intermedias
     for (i = 0; i < cotas.length - 1; i ++) {
         if ((cotas[i] < limiteSuperior) && (cotas[i + 1] >= limiteSuperior) && !calculoSuperior) {
             influenciaSuperior = (cotas[i + 1] - limiteSuperior) * arrayParams[i]
             acumSuelo = acumSuelo + (cotas[i + 1] - limiteSuperior)
             calculoSuperior = true
+            
         } else if ((cotas[i] < limiteInferior) && (cotas[i + 1] >= limiteInferior) && calculoSuperior && !calculoInferior) {
             influenciaInferior = (limiteInferior - cotas[i]) * arrayParams[i]
             acumSuelo = acumSuelo + (limiteInferior - cotas[i])
             calculoInferior = true
+            
         } else if (calculoSuperior && !calculoInferior && cotas[i] < limiteInferior) {
             capaCompleta = capaCompleta + parseFloat(suelos[i].espesor) * arrayParams[i]
             acumSuelo = acumSuelo + parseFloat(suelos[i].espesor)
+            
         }
     }
     
@@ -330,22 +363,22 @@ const mostrarCoeficientes = ({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}) => {
 
 // Función para calcular Q y Y
 const calcularQY = (hC) => {
-    const d = parseFloat(datosIniciales.d)
     const b = parseFloat(datosIniciales.b)
     const nf = parseFloat(datosIniciales.nf)
     const df = parseFloat(datosIniciales.df)
+    const d = nf - df
     const hc = parseFloat(hC)
     
-    if (d > b) {
+    if (d >= b) {
         // Caso 3
         const qProm = parseFloat(datos[0].gammah) * df
-        const yProm = calcularProm(datos, df, df + hc, 'gammah')
+        const yProm = calcularProm(datos, df, df + hc, 'gammah') + calcularProm(datos, df, df + hc, 'gammasat')
 
         return {qProm, yProm}
         
     } else if (nf < df) {
         // Caso 1
-        console.log('Entramos a caso I')
+        
         const yH = parseFloat(datos[0].gammah)
         const d1 = parseFloat(datos[0].espesor)
         const y = parseFloat(datos[1].gammasat) - 9.81
@@ -359,7 +392,6 @@ const calcularQY = (hC) => {
     } else if (nf > df) {
         // Caso 2
 
-        console.log('Entramos a caso 2')
         const qProm = calcularProm(datos, 0.000001, df, 'gammah')
 
         const ymProm = calcularProm(datos, df, nf, 'gammah')
@@ -435,11 +467,11 @@ const mostrarAsentamientos = (elasticosCentro, elasticosEsquina, consolidados, s
 
     renderDatos('#resultados-asentamientos', arrayDatos)
     
-    totalElasticosCentro.textContent = sumaCentro.toFixed(4)
-    totalElasticosEsquina.textContent = sumaEsquina.toFixed(4)
-    totalConsolidados.textContent = sumaConsolidados.toFixed(4)
+    totalElasticosCentro.textContent = sumaCentro.toFixed(3)
+    totalElasticosEsquina.textContent = sumaEsquina.toFixed(3)
+    totalConsolidados.textContent = sumaConsolidados.toFixed(3)
 
-    totalAsentamientos.textContent = (sumaCentro + sumaConsolidados).toFixed(4)
+    totalAsentamientos.textContent = (sumaCentro + sumaConsolidados).toFixed(2)
     zAsent.textContent = z
     infAsent.textContent = influencia
 

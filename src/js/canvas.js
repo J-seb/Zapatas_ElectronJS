@@ -41,10 +41,10 @@ const graph2d = () => {
                 const df = espesor2px(parseFloat(datosIniciales.df), 350, totalProfundidad)
                 const b = espesor2px(parseFloat(datosIniciales.b), 350, 7)
                 const anchoZ = espesor2px(0.4, 350, 7)
-                const d = espesor2px(parseFloat(datosIniciales.d), 350, totalProfundidad)
                 const nf = espesor2px(parseFloat(datosIniciales.nf), 350, totalProfundidad)
+                const d = espesor2px(parseFloat(datosIniciales.nf) - parseFloat(datosIniciales.df), 350, totalProfundidad)
 
-                zGraph(ctx, 310, 70, '#a8a3a3', df, b, d, nf, anchoZ, `${datosIniciales.b} m`, `${datosIniciales.df} m`, `${datosIniciales.d} m`, `${datosIniciales.nf} m`)
+                zGraph(ctx, 310, 70, '#a8a3a3', df, b, d, nf, anchoZ, `${datosIniciales.b} m`, `${datosIniciales.df} m`, `${datosIniciales.nf - datosIniciales.df} m`, `${datosIniciales.nf} m`)
 
                 flechaVU2D(ctx, 310, 50, 30, `${datosIniciales.ql} Ton`)
             }

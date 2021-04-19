@@ -1,7 +1,7 @@
 // Toast
 let message = ''
 
-const crearToast = () => {
+const crearToast = (m) => {
     const body = document.querySelector('body')
     const firstScript = document.querySelector('#primer-script')
 
@@ -16,7 +16,7 @@ const crearToast = () => {
 
     const toastBody = document.createElement('div')
     toastBody.setAttribute('class', 'toast-body')
-    toastBody.textContent = 'Por favor, ingrese datos de suelos y de zapata'
+    toastBody.textContent = m
 
     const closeButton = document.createElement('button')
     closeButton.setAttribute('type', 'button')
@@ -38,9 +38,9 @@ const eliminarToast = () => {
 }
 
 
-const toastNoDatosIniciales = () => {
+const mostrarToast = (m) => {
 
-    crearToast()
+    crearToast(m)
     let miToast = document.querySelector('.toast')
     let toast = new Bootstrap.Toast(miToast, {
         animation: true,

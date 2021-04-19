@@ -2,6 +2,7 @@ const { jsPDF } = require("jspdf")
 const path = require('path')
 const fs = require('fs')
 require('jspdf-autotable')
+//require('../js/fonts/Roboto-Regular-Module')
 
 const generateNewName = () => {
     const files = fs.readdirSync(__dirname)
@@ -25,11 +26,14 @@ const generateNewName = () => {
 
 const crearPDF = () => {
 
+    // Obtener la imagen 2d y 3d
     const canvas2d = document.querySelector('#canvas2d')
 
+    // Recordemos que cv3d ya existe y cambia su valor cada que se mueva la imagen
     let imgData2D = canvas2d.toDataURL('image/png')
     let imgData3D = cv3d
 
+    // Creamos un nuevo documento jsPDF con las características mencionadas
     let doc = new jsPDF({
         orientation: "p",
         unit: "mm",
@@ -38,22 +42,55 @@ const crearPDF = () => {
         floatPrecision: 16
     });
 
-    doc.setDrawColor('gray')
-    
-    doc.setFont('helvetica')
-    doc.setFontSize(16)
-    doc.text("ANÁLISIS DE ZAPATA", 73, 30, );
+    // Ingresamos y cargamos las fonts previamente convertidas de ttf a base64 ubicadas en
+    // js/fonts
 
-    doc.line(14, 35, 210-14, 35)
+    let fontUsed = "Montserrat"
+
+    doc.addFileToVFS("Montserrat-Regular.ttf", montserratFont)
+    doc.addFont("Montserrat-Regular.ttf", "Montserrat", "normal")
+
+    doc.addFileToVFS("Montserrat-Regular-Bold.ttf", monserratFontBold)
+    doc.addFont("Montserrat-Regular-Bold.ttf", "Montserrat", "bold")
+
+    doc.addFileToVFS("Roboto-Regular.ttf", robotoFont)
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal")
+
+    // Seleccionamos la fuente que vamos a usar, en este caso tomamos Montserrat en su forma
+    // Regular y Bold
+
+    doc.setFont(fontUsed);
+
+    // Configuramos el color para hacer las lineas y cuadriláteros en el pdf
+
+    doc.setDrawColor('gray')
+
+    // Configuramos color de encabezado de pdf
+
+    let colorHead = [66, 66, 66]
+    
+    // Configuramos el tamaño de letra y título
+    
+    doc.setFontSize(16)
+    doc.setTextColor(0)
+    doc.text("CÁLCULO CAPACIDAD PORTANTE Y ASENTAMIENTOS", 27, 23, );
+
+    doc.rect(14, 14, 210-28, 297-28)
+
+    doc.line(14, 28, 210-14, 28)
+
+    doc.setFontSize(14)
+    doc.text("Resultados", 90, 35, );
 
     doc.setFontSize(12)
-    doc.setFont('helvetica', 'italic')
-    doc.setTextColor(92, 92, 92)
+    //doc.setTextColor(92, 92, 92)
+    doc.setFont(fontUsed, 'bold')
     doc.text('Modelamiento de zapata', 16, 45)
 
     doc.setFontSize(14)
-    doc.setFont('helvetica', 'normal')
+    //doc.setFont('helvetica', 'normal')
     doc.setTextColor(0, 0, 0)
+    doc.setFont(fontUsed, 'normal')
     doc.text('Vista 2D', 50, 58)
 
     doc.text('Vista 3D', 140, 58)
@@ -66,7 +103,7 @@ const crearPDF = () => {
 
     doc.addImage(imgData3D, 'PNG', 109, 60, 83, 66, 'Zapata3D', 'NONE')
 
-    doc.setDrawColor('gray')
+    //doc.setDrawColor('gray')
     doc.line(16, 62, 103, 62)
 
     doc.line(107, 62, 194, 62)
@@ -74,58 +111,86 @@ const crearPDF = () => {
     doc.line(14, 132, 210-14, 132)
 
     doc.setFontSize(12)
-    doc.setFont('helvetica', 'italic')
-    doc.setTextColor(92, 92, 92)
+    doc.setFont(fontUsed, 'bold')
+    //doc.setTextColor(92, 92, 92)
     doc.text('Datos iniciales ingresados', 16, 142)
 
     let datosI = Object.values(datosIniciales)
     datosI.push(met.slice(0, 1).toUpperCase() + met.slice(1, met.length))
 
+    doc.setFont(fontUsed, 'normal')
     doc.autoTable({
-        head: [['L [m]', 'B [m]', 'IF', 'NF [m]', 'Df [m]', 'd [m]', 'Qload [ton]', 'Phi(i) [°]', 'FS', 'Metodología']],
+        head: [['L [m]', 'B [m]', 'IF', 'NF [m]', 'Df [m]', 'Qload [ton]', 'Phi(i) [°]', 'FS', 'Metodología']],
         body: [datosI],
         startY: 148,
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle'
+        },
+        margin: {
+            left: 16,
+            right: 16
         }
     })
-
-    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5)
+    doc.setDrawColor('gray')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
 
     doc.setFontSize(12)
-    doc.setFont('helvetica', 'italic')
-    doc.setTextColor(92, 92, 92)
+    doc.setFont(fontUsed, 'bold')
+    //doc.setTextColor(92, 92, 92)
     doc.text('Datos de suelos', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         html: '#tabla-datos', 
         startY: doc.lastAutoTable.finalY + 20,
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle'
-            }
+        },
+        margin: {
+            left: 16,
+            right: 16
+        }
     })
+    doc.setDrawColor('gray')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
 
-    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5)
-
+   /*  doc.setFontSize(14)
+    doc.setFont(fontUsed, 'normal')
+    //doc.setTextColor(92, 92, 92)
+    doc.text('Resultados', 90, doc.lastAutoTable.finalY + 15)
+ */
     doc.setFontSize(12)
-    doc.setFont('helvetica', 'italic')
-    doc.setTextColor(92, 92, 92)
-    doc.text('Cálculos', 16, doc.lastAutoTable.finalY + 15)
-
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontUsed, 'bold')
     doc.text('Capacidad Portante', 16, doc.lastAutoTable.finalY + 22)
 
     doc.autoTable({
         html: '#tabla-resultados', 
         startY: doc.lastAutoTable.finalY + 27,
         showHead: 'firstPage',
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
+        margin: {
+            left: 16,
+            right: 16
+        }
     })
 
     let autFinalY = doc.lastAutoTable.finalY
@@ -133,8 +198,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados2', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -147,8 +216,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados3', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -161,8 +234,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados4', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -177,8 +254,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados5', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -191,8 +272,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados6', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -205,8 +290,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados7', 
         startY: autFinalY + 10,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -221,8 +310,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados8', 
         startY: autFinalY + 5,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -235,8 +328,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados9', 
         startY: autFinalY + 5,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -249,8 +346,12 @@ const crearPDF = () => {
     doc.autoTable({
         html: '#tabla-resultados10', 
         startY: autFinalY + 5,
-        showHead: 'firstPage',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -261,22 +362,28 @@ const crearPDF = () => {
     })
 
     doc.setDrawColor('gray')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
+    doc.rect(14, 14, 210-28, 297-28)
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Asentamientos', 16, doc.lastAutoTable.finalY + 15)
+    doc.setFontSize(12)
+    doc.setFont(fontUsed, 'bold')
+    doc.text('Asentamientos', 90, doc.lastAutoTable.finalY + 15)
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Parámetros Elásticos', 16, doc.lastAutoTable.finalY + 25)
+    //doc.setFontSize(12)
+    //doc.setFont('helvetica', 'normal')
+    doc.text('Asentamientos Elásticos', 16, doc.lastAutoTable.finalY + 25)
 
     autFinalY = doc.lastAutoTable.finalY
 
     doc.autoTable({
         body: [["B'", arrayParamsElasticosB[0]]],
-        startY: autFinalY + 30,
-        showHead: 'firstPage',
+        startY: autFinalY + 35,
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -288,9 +395,13 @@ const crearPDF = () => {
 
     doc.autoTable({
         body: [["L'", arrayParamsElasticosB[1]]],
-        startY: autFinalY + 30,
-        showHead: 'firstPage',
+        startY: autFinalY + 35,
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -302,9 +413,13 @@ const crearPDF = () => {
 
     doc.autoTable({
         body: [["m'", arrayParamsElasticosB[2]]],
-        startY: autFinalY + 30,
-        showHead: 'firstPage',
+        startY: autFinalY + 35,
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -314,77 +429,117 @@ const crearPDF = () => {
         }
     })
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Centro', 16, doc.lastAutoTable.finalY + 10)
+    doc.setFontSize(12)
+    doc.setFont(fontUsed , 'bold')
+    doc.text('Asentamientos en centro', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         head: [["Estrato", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
         body: arrayParamsElasticosC,
-        startY: doc.lastAutoTable.finalY + 15,
-        showHead: 'firstPage',
+        startY: doc.lastAutoTable.finalY + 20,
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
+        margin: {
+            left: 16,
+            right: 16
+        }
         
     })
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Esquina', 16, doc.lastAutoTable.finalY + 10)
+    doc.setFontSize(12)
+    doc.setFont(fontUsed, 'bold')
+    doc.text('Asentamientos en esquinas', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         head: [["Estrato", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
         body: arrayParamsElasticosE,
-        startY: doc.lastAutoTable.finalY + 15,
-        showHead: 'firstPage',
+        startY: doc.lastAutoTable.finalY + 20,
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
-        
+        margin: {
+            left: 16,
+            right: 16
+        }
     })
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Parámetros Consolidados', 16, doc.lastAutoTable.finalY + 10)
+    doc.setFontSize(12)
+    doc.setFont(fontUsed, 'bold')
+    doc.text('Parámetros Consolidados', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         head: [["Estrato", "Sigma 0", 'Delta Inf', 'Delta Med', 'Delta Sup', 'Delta Prom']],
         body: arrayParamsConsolidados,
-        startY: doc.lastAutoTable.finalY + 15,
+        startY: doc.lastAutoTable.finalY + 20,
         showHead: 'firstPage',
+        headStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
-        
+        margin: {
+            left: 16,
+            right: 16
+        }
     })
 
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Aportes por estrato', 16, doc.lastAutoTable.finalY + 10)
+    doc.setFontSize(12)
+    doc.setFont(fontUsed, 'bold')
+    doc.text('Asentamientos por estrato', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         html: '#tabla-asentamientos', 
-        startY: doc.lastAutoTable.finalY + 15,
+        startY: doc.lastAutoTable.finalY + 20,
         showHead: 'firstPage',
         showFoot: 'lastPage',
+        headStyles: {
+            fillColor: colorHead
+        },
+        footStyles: {
+            fillColor: colorHead
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
+        },
+        margin: {
+            left: 16,
+            right: 16
         }
-        
     })
 
     autFinalY = doc.lastAutoTable.finalY
 
     doc.autoTable({
         html: '#tabla-resultados11', 
-        startY: autFinalY + 10,
+        startY: autFinalY + 15,
         showHead: 'firstPage',
+        pageBreak: 'avoid',
+        rowPageBreak: 'avoid',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
             halign: 'center',
             valign: 'middle',
         },
@@ -396,9 +551,15 @@ const crearPDF = () => {
 
     doc.autoTable({
         html: '#tabla-resultados12', 
-        startY: autFinalY + 10,
+        startY: autFinalY + 15,
         showHead: 'firstPage',
+        pageBreak: 'avoid',
+        rowPageBreak: 'avoid',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
             halign: 'center',
             valign: 'middle',
         },
@@ -410,9 +571,16 @@ const crearPDF = () => {
 
     doc.autoTable({
         html: '#tabla-resultados13', 
-        startY: autFinalY + 10,
+        startY: autFinalY + 15,
         showHead: 'firstPage',
+        pageBreak: 'avoid',
+        rowPageBreak: 'avoid',
+        columnStyles: {
+            0: { fillColor: colorHead, textColor: 255},
+        },
         styles: {
+            font: fontUsed,
+            fontStyle: 'normal',
             halign: 'center',
             valign: 'middle',
         },
@@ -421,20 +589,24 @@ const crearPDF = () => {
             right: 16
         }
     })
+    
 
-    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5)
+    doc.setDrawColor('gray')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
 
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'italic')
-    doc.setTextColor(92, 92, 92)
+    doc.setFontSize(14)
+    doc.setFont(fontUsed, 'bold')
     doc.text('Conclusiones', 16, doc.lastAutoTable.finalY + 15)
 
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontUsed, 'normal')
+
     doc.text(message, 16, doc.lastAutoTable.finalY + 22, {
         align: "justify",
         maxWidth: 210 - 32
     })
+
+    doc.rect(14, 14, 210-28, doc.lastAutoTable.finalY + 30)
 
     doc.save(generateNewName())
 
