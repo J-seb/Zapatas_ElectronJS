@@ -38,10 +38,6 @@ const calcularI = (m, n) => {
 } */
 
 const calcularElasticos = (datosZapata, suelo, h) => {
-    arrayParamsElasticosB = []
-    arrayParamsElasticosC = []
-    arrayParamsElasticosE = []
-    contador = 0
 
     // Constantes iniciales para el cálculo
 
@@ -158,10 +154,14 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 
     let h = 0
 
-    df + z < nf ? limiteInferior = df + z : limiteInferior = nf
+    df + parseFloat(z) < nf ? limiteInferior = df + parseFloat(z) : limiteInferior = nf
 
     let arrayElasticosCentro = []
     let arrayElasticosEsquina = []
+
+    console.log({limiteSuperior, limiteInferior})
+    console.log({suelos, datosIniciales})
+    console.log({cotas})
 
     for (i = 0; i < cotas.length - 1; i ++) {
         if ((cotas[i] < limiteSuperior) && (cotas[i + 1] >= limiteSuperior) && !calculoSuperior) {
@@ -177,7 +177,10 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 
         } else if ((cotas[i] < limiteInferior) && (cotas[i + 1] >= limiteInferior) && calculoSuperior && !calculoInferior) {
             h = (limiteInferior - cotas[i])
+            console.log({limiteInferior})
+            console.log(cotas[i])
             
+            console.log('Valor de h es ' + h)
             const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
 
             arrayElasticosCentro.push(asenC)
@@ -185,6 +188,7 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 
             calculoInferior = true
         } else if (calculoSuperior && !calculoInferior && cotas[i] < limiteInferior) {
+            console.log('Entramos a capa completa')
             h = parseFloat(suelos[i].espesor)
 
             const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
@@ -199,69 +203,53 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 /*  const suelos = [
     {
         cc: "",
-        cohesion: "20",
-        cs: "",
-        eo: "",
-        es: "10000",
-        mu: "0.2",
-        phi: "10",
-        espesor: "2"
-    }, 
-    {
-        cc: "",
+        gammah: "17",
         cohesion: "10",
         cs: "",
-        eo: "",
-        es: "5000",
-        mu: "0.25",
-        phi: "15",
+        eo: "0.72",
+        es: "15000",
+        mu: "0.28",
+        phi: "25",
         espesor: "1.5"
     }, 
     {
         cc: "",
-        cohesion: "0",
+        cohesion: "25",
+        gammah: "18",
         cs: "",
-        eo: "",
-        es: "15000",
-        mu: "0.3",
-        phi: "5",
-        espesor: "2"
+        eo: "0.8",
+        es: "10000",
+        mu: "0.25",
+        phi: "30",
+        espesor: "4"
     }, 
     {
-        cc: "0.09",
+        cc: "",
+        gammah: "16",
         cohesion: "5",
         cs: "",
-        eo: "0.072",
-        es: "10000",
-        mu: "0.35",
-        phi: "5",
-        espesor: "5"
-    },
-    {
-        cc: "",
-        cohesion: "100",
-        cs: "",
-        eo: "",
-        es: "",
-        mu: "",
-        phi: "30",
-        espesor: "5"
+        eo: "0.09",
+        es: "30000",
+        mu: "0.3",
+        phi: "25",
+        espesor: "6"
     }
 ]
 
 const datosIniciales = {
-    b: 5,
+    b: 2,
     d: 3.5,
-    df: 2,
+    df: 1.5,
     fs: 3,
-    l: 6,
-    nf: 5.5,
+    l: 3,
+    nf: 11.5,
     phi2: 12,
-    ql: 450,
-    ifz: 0.81
+    ql: 100,
+    iF: 0.93
 }
 
-const c = calcularAsentamientosElasticos(suelos, datosIniciales, 11.3)
-console.log(c) */
+const c = calcularAsentamientosElasticos(suelos, datosIniciales, 5)
+console.log(c)
 
 
+ */

@@ -71,6 +71,11 @@ botonCalcular.addEventListener('click', () => {
     calculosTabla = []
     met = sel.value
     let pMet = {}
+    arrayParamsConsolidados = []
+    arrayParamsElasticosB = []
+    arrayParamsElasticosC = []
+    arrayParamsElasticosE = []
+    contador = 0
 
     //crearToast()
 
@@ -279,7 +284,7 @@ const calcularHansen = (phiPromedio) => {
 
     const sC = 1 + nQ / nC * b / l
     const sQ = 1 + b / l * Math.sin(phiRadianes)
-    const sY = 1 - 0.4 * b / l <= 0.6 ? 1 - 0.4 * b / l : 0.6
+    const sY = 1 - 0.4 * b / l <= 0.6 ? 0.6 : 1 - 0.4 * b / l
 
     // Factores de profundidad
 
