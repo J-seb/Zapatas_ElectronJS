@@ -154,8 +154,9 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 
     let h = 0
 
-    df + parseFloat(z) < nf ? limiteInferior = df + parseFloat(z) : limiteInferior = nf
+    //df + parseFloat(z) < nf ? limiteInferior = df + parseFloat(z) : limiteInferior = nf
 
+    limiteInferior = df + parseFloat(z)
     let arrayElasticosCentro = []
     let arrayElasticosEsquina = []
 
@@ -202,53 +203,45 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
 
 /*  const suelos = [
     {
-        cc: "",
         gammah: "17",
-        cohesion: "10",
-        cs: "",
-        eo: "0.72",
-        es: "15000",
-        mu: "0.28",
-        phi: "25",
-        espesor: "1.5"
-    }, 
-    {
-        cc: "",
-        cohesion: "25",
-        gammah: "18",
-        cs: "",
-        eo: "0.8",
+        cohesion: "20",
+        eo: "0.09",
         es: "10000",
         mu: "0.25",
+        phi: "15",
+        espesor: "4"
+    }, 
+    {
+        cohesion: "10",
+        gammah: "20",
+        es: "50000",
+        mu: "0.3",
         phi: "30",
         espesor: "4"
     }, 
     {
-        cc: "",
-        gammah: "16",
-        cohesion: "5",
-        cs: "",
-        eo: "0.09",
+        cc: "0.6",
+        gammasat: "18",
+        cohesion: "20",
+        eo: "0.72",
         es: "30000",
         mu: "0.3",
-        phi: "25",
-        espesor: "6"
+        phi: "20",
+        espesor: "4"
     }
 ]
 
 const datosIniciales = {
-    b: 2,
-    d: 3.5,
-    df: 1.5,
+    b: 4,
+    df: 2,
     fs: 3,
     l: 3,
-    nf: 11.5,
-    phi2: 12,
-    ql: 100,
-    iF: 0.93
+    nf: 4,
+    ql: 450,
+    iF: 0.65
 }
 
-const c = calcularAsentamientosElasticos(suelos, datosIniciales, 5)
+const c = calcularAsentamientosElasticos(suelos, datosIniciales, 8)
 console.log(c)
 
 

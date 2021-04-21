@@ -93,7 +93,9 @@ const calcularSigmaDeltas = (pos, suelos, z, datosIniciales) => {
 
     console.log({deltaSup, deltaMed, deltaInf})
 
-    arrayParamsConsolidados.push([pos + 1, sigma0.toFixed(3), deltaInf.toFixed(3), deltaMed.toFixed(3), deltaSup.toFixed(3), deltaProm.toFixed(3)])
+    if (sigma0) {
+        arrayParamsConsolidados.push([pos + 1, sigma0.toFixed(3), deltaInf.toFixed(3), deltaMed.toFixed(3), deltaSup.toFixed(3), deltaProm.toFixed(3)])
+    }
 
     return {sigma0, deltaProm, h}
 }
