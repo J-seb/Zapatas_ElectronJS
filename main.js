@@ -7,7 +7,7 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true
     },
-    icon: './src/images/icons/icon.ico'
+    icon: './assets/icons/win/icon.ico'
   })
 
   win.loadFile('index.html')
