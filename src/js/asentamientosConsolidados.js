@@ -78,7 +78,7 @@ const calcularSigmaDeltas = (pos, suelos, z, datosIniciales) => {
         deltaMed = qKN / ((b + medio - df) * (l + medio - df))
         deltaInf = qKN / ((b + cotas[pos + 1] - df) * (l + cotas[pos + 1] - df))
 
-        h = suelos[i] / 2
+        h = parseFloat(suelos[i].espesor) / 2
     }
 
     for (let i = 0; i < pos; i++) {
@@ -107,13 +107,13 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
     let cotas = calcularCotas(suelos)
 
     let arrayConsolidados = []
-    console.log({cotas})
+    //console.log({cotas})
     for (i = 0; i < cotas.length - 1; i ++) {
         if (cotas[i] >= nf) {
             console.log('Entramos a consolidados estrato', i + 1)
-            console.log({i, suelos, z, datosIniciales})
+            //console.log({i, suelos, z, datosIniciales})
             const {sigma0, deltaProm, h} = calcularSigmaDeltas(i, suelos, parseFloat(z), datosIniciales)
-            console.log({sigma0, deltaProm})
+            console.log({sigma0, deltaProm, h})
             if (suelos[i].cc && !suelos[i].cs) {
                 // Asentamiento normalmente consolidados
                 console.log('Calculamos asentamiento normalmente consolidado')
@@ -139,40 +139,40 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
 
 /* const suelos = [{
     cc: "",
-    cohesion: "30",
+    cohesion: "10.001",
     cs: "",
-    eo: "",
-    es: "2500",
-    mu: "0.28",
-    phi: "33",
-    espesor: "4",
+    eo: "0.72",
+    es: "3000",
+    mu: "0.3",
+    phi: "20",
+    espesor: "3",
     gammasat: '',
-    gammah: '18',
+    gammah: '17',
     sigmac: ''
 }, 
 {
-    cc: "0.09",
-    cohesion: "50",
+    cc: "0.9",
+    cohesion: "15",
     cs: "",
-    eo: "0.72",
-    es: "30000",
-    mu: "0.35",
-    phi: "15",
-    espesor: "3",
-    gammasat: '21.5',
+    eo: "0.09",
+    es: "50000",
+    mu: "0.25",
+    phi: "30",
+    espesor: "4",
+    gammasat: '20',
     gammah: '',
     sigmac: ''
 }, 
 {
-    cc: "0.08",
-    cohesion: "60",
+    cc: "0.9",
+    cohesion: "10",
     cs: "",
-    eo: "0.8",
-    es: "30000",
-    mu: "0.35",
-    phi: "17",
-    espesor: "10",
-    gammasat: '23',
+    eo: "00.7",
+    es: "50000",
+    mu: "0.3",
+    phi: "20",
+    espesor: "3",
+    gammasat: '19',
     gammah: '',
     sigmac: ''
 }
@@ -180,15 +180,15 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
 
 
 const datosIniciales = {
-    b: 2,
-    df: 1.5,
+    b: 3,
+    df: 2,
     fs: 3,
-    l: 2,
-    nf: 4,
+    l: 3,
+    nf: 3,
     ql: 200,
-    ifz: 0.86
+    ifz: 0.89
 }
 
-const z = 4
+const z = 6
 const arrayConsolidados = calcularAsentamientosConsolidados(suelos, datosIniciales, z)
 console.log(arrayConsolidados) */
