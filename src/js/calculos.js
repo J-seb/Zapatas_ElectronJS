@@ -235,7 +235,7 @@ const calcularProm = (suelos, inicio, fin, param) => {
         }
     }
     
-    if (limiteSuperior < 0.001) {
+    if (limiteSuperior < 0.001 || (limiteInferior === limiteSuperior)) {
         return (influenciaInferior + influenciaSuperior + capaCompleta)
     } else {
         return (influenciaInferior + influenciaSuperior + capaCompleta) / acumSuelo
@@ -394,7 +394,7 @@ const calcularQY = (hC) => {
 
         return {qProm, yProm}
 
-    } else if (nf > df) {
+    } else if (nf >= df) {
         // Caso 2
 
         const qProm = calcularProm(datos, 0.000001, df, 'gammah')
