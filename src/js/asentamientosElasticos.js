@@ -88,7 +88,7 @@ const calcularElasticos = (datosZapata, suelo, h, z) => {
 
     const isc = calcularIs(f1c, f2c, mu)
 
-    console.log({f1c, f2c, a0c, a1c, a2c, npc, })
+    console.log({q, ifz, a0c, a1c, a2c, f1c, f2c, isc, influencia})
 
     const asenC = !isNaN(formulaElasticos(q, alphaC, bp, mu, es, isc, ifz)) ? (formulaElasticos(q, alphaC, bp, mu, es, isc, ifz) * 100).toFixed(2) : '0.00'
 

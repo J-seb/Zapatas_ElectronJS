@@ -9,15 +9,17 @@ const asentamientoNC = (suelo, deltaProm, sigma0, h) => {
 
 const asentamientoSC1 = (suelo, deltaProm, sigma0, h) => {
     const cs = parseFloat(suelo.cs)
-    const e0 = parseFloat(suelo.e0)
+    const e0 = parseFloat(suelo.eo)
+
+    console.log({cs, e0, suelo, deltaProm, sigma0, h})
 
     return (cs * 2 * h) / (1 + e0) * Math.log10((sigma0 + deltaProm) / sigma0)
 }
 
 const asentamientoSC2 = (suelo, deltaProm, sigma0, h) => {
     const cs = parseFloat(suelo.cs)
-    const e0 = parseFloat(suelo.e0)
-    const sigmaC = parseFloat(suelo.sigmaC)
+    const e0 = parseFloat(suelo.eo)
+    const sigmaC = parseFloat(suelo.sc)
     const cc = parseFloat(suelo.cc)
 
     return (cs * 2 * h) / (1 + e0) * Math.log10(sigmaC / sigma0) + (cc * h) / (1 + e0) * Math.log10((sigma0 + deltaProm) / sigma0)
@@ -119,14 +121,14 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
                 console.log('Calculamos asentamiento normalmente consolidado')
                 const consolidado = asentamientoNC(suelos[i], deltaProm, sigma0, h) * 100
                 arrayConsolidados.push(consolidado.toFixed(2))
-            } else if (suelos[i].cs && !suelos[i].cc || (sigma0 + deltaProm <= datosIniciales.sigmac)) {
+            } else if (sigma0 + deltaProm <= parseFloat(suelos[i].sc)) {
                 // Asentamiento sobre consolidado caso I
-                
+                console.log('Calculamos asentamiento sobre consolidado caso I')
                 const consolidado = asentamientoSC1(suelos[i], deltaProm, sigma0, h) * 100
                 arrayConsolidados.push(consolidado.toFixed(2))
-            } else if (suelos[i].cc && suelos[i].cs || (sigma0 + deltaProm > datosIniciales.sigmac)) {
+            } else if (sigma0 + deltaProm > parseFloat(suelos[i].sc)) {
                 // Asentamiento sobre consolidado caso II
-                
+                console.log('Calculamos asentamiento sobre consolidado caso II')
                 const consolidado = asentamientoSC2(suelos[i], deltaProm, sigma0, h) * 100
                 arrayConsolidados.push(consolidado.toFixed(2))
             }

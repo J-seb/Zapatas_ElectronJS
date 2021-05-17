@@ -22,6 +22,7 @@ const mu = document.querySelector('#mu')
 const eo = document.querySelector('#eo')
 const cc = document.querySelector('#cc')
 const cs = document.querySelector('#cs')
+const sc = document.querySelector('#sc')
 const nombre = document.querySelector('#nombre')
 const color = document.querySelector('#color')
 
@@ -84,6 +85,7 @@ const seleccionarElemento = (capa) => {
     eo.value = elemento["eo"]
     cc.value = elemento["cc"]
     cs.value = elemento["cs"]
+    sc.value = elemento["sc"]
     nombre.value = elemento["nombre"]
     color.value = elemento["color"]
 
@@ -143,6 +145,7 @@ const resetForm = () => {
     eo.value = ''
     cc.value = ''
     cs.value = ''
+    sc.value = ''
     nombre.value = 'Arena'
     color.value = '#000000'
 }
