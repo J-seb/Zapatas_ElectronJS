@@ -83,11 +83,10 @@ botonCalcular.addEventListener('click', () => {
         datosIniciales[dato.name] = parseFloat(dato.value)
     })
 
-    if (!datosIniciales.phi2) {
-        let acumPhi = 0
-        datos.forEach((dato) => acumPhi = acumPhi + parseFloat(dato.phi))
-        datosIniciales.phi2 = Math.round(acumPhi / datos.length)
-    }
+    
+    let acumPhi = 0
+    datos.forEach((dato) => acumPhi = acumPhi + parseFloat(dato.phi))
+    datosIniciales.phi2 = Math.round(acumPhi / datos.length)
 
     if (!datosIniciales.nf) {
         let acumEsp = 0
@@ -95,10 +94,10 @@ botonCalcular.addEventListener('click', () => {
         datosIniciales.nf = acumEsp
     }
 
-    if (!datosIniciales.iF) {
-        datosIniciales.iF = 1
-        //mostrarToast('Advertencia: IF no ingresado, no se garantiza el cálculo de Asentamientos')
-    }
+    // if (!datosIniciales.iF) {
+    //     datosIniciales.iF = 1
+    //     //mostrarToast('Advertencia: IF no ingresado, no se garantiza el cálculo de Asentamientos')
+    // }
 
     if (Object.values(datosIniciales).includes(NaN) || datos.length === 0) {
         mostrarToast('Por favor, ingrese datos de suelos y de zapata')
@@ -254,11 +253,11 @@ const calcular = (datosIniciales) => {
         } else {
             phi = calculosTabla[i - 1].phiProm
         }
-        let alpha = calcularAlpha(phi).toFixed(3)
-        let ro = calcularRo(b, alpha).toFixed(3)
-        let r = calcularR(ro, alpha, phi).toFixed(3)
-        hC = calcularHc(phi, r).toFixed(3)
-        phiProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'phi').toFixed(3)
+        let alpha = calcularAlpha(phi).toFixed(2)
+        let ro = calcularRo(b, alpha).toFixed(2)
+        let r = calcularR(ro, alpha, phi).toFixed(2)
+        hC = calcularHc(phi, r).toFixed(2)
+        phiProm = calcularProm(datos, datosIniciales.df, parseFloat(datosIniciales.df) + parseFloat(hC), 'phi').toFixed(2)
 
         let _id = uuidv4()
         calculosTabla.push({_id, alpha, ro, r, hC, phiProm})
@@ -353,17 +352,17 @@ const calcularMeyerhof = (phiPromedio) => {
 // Mostrar parámetros 
 const mostrarCoeficientes = ({nC, nQ, nY, sC, sQ, sY, dC, dQ, dY}) => {
 
-    tNC.textContent = nC.toFixed(4)
-    tNQ.textContent = nQ.toFixed(4)
-    tNY.textContent = nY.toFixed(4)
+    tNC.textContent = nC.toFixed(2)
+    tNQ.textContent = nQ.toFixed(2)
+    tNY.textContent = nY.toFixed(2)
 
-    tSC.textContent = sC.toFixed(4)
-    tSQ.textContent = sQ.toFixed(4)
-    tSY.textContent = sY.toFixed(4)
+    tSC.textContent = sC.toFixed(2)
+    tSQ.textContent = sQ.toFixed(2)
+    tSY.textContent = sY.toFixed(2)
 
-    tDC.textContent = dC.toFixed(4)
-    tDQ.textContent = dQ.toFixed(4)
-    tDY.textContent = dY.toFixed(4)
+    tDC.textContent = dC.toFixed(2)
+    tDQ.textContent = dQ.toFixed(2)
+    tDY.textContent = dY.toFixed(2)
 }
 
 // Función para calcular Q y Y
@@ -423,13 +422,13 @@ const calcularQFinal = (metodologia, resMet, b, l, fs, cProm, qProm, yProm) => {
 
 const mostrarParametrosFinales = (qUlt, qAdmN, qAdmT, cProm, yProm, qProm) => {
 
-    tcprom.textContent = cProm.toFixed(3)
-    typrom.textContent = yProm.toFixed(3)
-    tq.textContent = qProm.toFixed(3)
+    tcprom.textContent = cProm.toFixed(2)
+    typrom.textContent = yProm.toFixed(2)
+    tq.textContent = qProm.toFixed(2)
 
-    tqult.textContent = qUlt.toFixed(3)
-    tqadmkn.textContent = qAdmN.toFixed(3)
-    tqadmt.textContent = qAdmT.toFixed(3)
+    tqult.textContent = qUlt.toFixed(2)
+    tqadmkn.textContent = qAdmN.toFixed(2)
+    tqadmt.textContent = qAdmT.toFixed(2)
 
 }
 
@@ -472,9 +471,9 @@ const mostrarAsentamientos = (elasticosCentro, elasticosEsquina, consolidados, s
 
     renderDatos('#resultados-asentamientos', arrayDatos)
     
-    totalElasticosCentro.textContent = sumaCentro.toFixed(3)
-    totalElasticosEsquina.textContent = sumaEsquina.toFixed(3)
-    totalConsolidados.textContent = sumaConsolidados.toFixed(3)
+    totalElasticosCentro.textContent = sumaCentro.toFixed(2)
+    totalElasticosEsquina.textContent = sumaEsquina.toFixed(2)
+    totalConsolidados.textContent = sumaConsolidados.toFixed(2)
 
     totalAsentamientos.textContent = (sumaCentro + sumaConsolidados).toFixed(2)
     zAsent.textContent = z

@@ -45,8 +45,8 @@
       </nav>
       <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-suelos" role="tabpanel" aria-labelledby="nav-suelos-tab">
-          <div class="row">
-            <div class="col-lg-5 mt-4">
+          <div class="row my-5">
+            <div class="col-lg-5">
               <div class="row">
                 <div class="col-10 offset-1 border rounded pb-4 pt-3">
                   <form id="agregar-elemento">
@@ -145,7 +145,7 @@
               </div>           
             </div>
 
-            <div class="col-lg-7 mt-4">
+            <div class="col-lg-7">
               <div class="row">
                 <div class="col-11 border rounded pb-4 pt-3 table-responsive">
                   <table class="table table-hover text-center" id="tabla-datos">
@@ -177,7 +177,7 @@
           </div>
         </div>
         <div class="tab-pane fade" id="nav-datos" role="tabpanel" aria-labelledby="nav-datos-tab">
-          <div class="row mt-4">
+          <div class="row my-5">
             <div class="col-lg-2 offset-lg-2 col-10 offset-1 border rounded pb-4 pt-3">
               <div class="row g-2 mt-3 mb-1">
                 <div class="form-floating">
@@ -191,12 +191,12 @@
                   <label for="b" class="ml-5">B: [m]</label>
                 </div>
               </div>
-              <div class="row g-2 mt-3 mb-1">
+              <!-- <div class="row g-2 mt-3 mb-1">
                 <div class="form-floating">
                   <input type="number" step="0.001" class="form-control datos-iniciales" id="iF" placeholder="IF: " name="iF">
                   <label for="iF" class="ml-5">IF: </label>
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <div class="col-lg-2 offset-lg-1 col-10 offset-1 border rounded pb-4 pt-3">
@@ -227,12 +227,12 @@
                   <label for="ql" class="ml-5">Qload: [T]</label>
                 </div>
               </div>
-              <div class="row g-2 mt-3 mb-1">
+              <!--<div class="row g-2 mt-3 mb-1">
                 <div class="form-floating">
                   <input type="number" step="0.001" class="form-control datos-iniciales" id="phi2" placeholder="&Phi;: " name="phi2">
                   <label for="phi2" class="ml-5">&Phi;: </label>
                 </div>
-              </div>
+              </div>-->
               <div class="row g-2 mt-3 mb-1">
                 <div class="form-floating">
                   <input type="number" step="0.001" class="form-control datos-iniciales" id="fs" placeholder="FS: " name="fs">
@@ -242,7 +242,7 @@
             </div>
           </div>
 
-          <div class="row mt-4">
+          <div class="row mb-5">
             <div class="col-6 offset-3 border rounded pb-4 pt-3">
               <select class="form-select" id="metodologia">
                 <option value="hansen">Metodología de Hansen</option>
@@ -254,7 +254,7 @@
         </div>
 
         <div class="tab-pane fade" id="nav-capacidad" role="tabpanel" aria-labelledby="nav-capacidad-tab">
-          <div class="row mt-4">
+          <div class="row my-5">
             <div class="col-lg-6">
               <div class="row">
                 <div class="col-10 offset-1 table-responsive">
@@ -429,7 +429,7 @@
 
 
         <div class="tab-pane fade" id="nav-asentamiento" role="tabpanel" aria-labelledby="nav-asentamiento-tab">
-          <div class="row mt-4">
+          <div class="row my-5">
             <div class="col-10 offset-1 table-responsive">
               <table class="table table-hover text-center" id="tabla-asentamientos">
                 <thead>
@@ -455,7 +455,7 @@
               </table>
             </div>
           </div>
-          <div class="row mt-4">
+          <div class="row mb-5">
             <div class="col-4">
               <div class="row">
                 <div class="col-9 offset-2">
@@ -540,7 +540,7 @@
     <!--<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>-->
     <script src="./src/js/fonts/Roboto-Regular.js"></script>
     <script src="./src/js/fonts/Montserrat-Regular.js"></script>
-
+    <script src="./src/js/fonts/LM-Roman-10-Regular.js"></script>
     <script src="./src/js/generarPdf.js"></script>
     <script src="./node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="./src/js/dom.js"></script>

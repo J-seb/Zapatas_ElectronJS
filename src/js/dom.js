@@ -126,40 +126,56 @@ const modalFinalZapata = (datosZapata, qAdmT, tAsentamientos) => {
     const bodyModal = document.querySelector('#textoFinal')
     bodyModal.innerHTML = ''
 
-    if (tAsentamientos < 30) {
-        if (1.1 * qload < qadm) {
-            const m1 = 'Los cálculos de capacidad portante indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas con amplio margen. '
-            const m2 = 'Por tanto, se establece con seguridad que el diseño de la zapata es el adecuado para los estratos ingresados y la carga respectiva. '
-            const m3 = 'Por otro lado, los resultados de asentamientos nos indican que el desplazamiento de la carga es menor al máximo permitido de 30cm.'
-    
-            bodyModal.innerHTML = '<br><p style="color: green; text-align: center;"><i class="fa fa-check-circle fa-5x"></i></p><br><br>' + m1 + '<br><br>' + m2 + '<br><br>' + m3
+    let m1, m2
+    let m3 = 'Se recomienda al ingeniero/Usuario realizar un análisis de los Asentamientos Diferenciales. Esta herramienta no considera las deformaciones diferenciales.'
 
-            message = m1 + m2 + m3
-    
-    
-        } else if (qload < qadm) {
-            const m1 = 'Los cálculos indican que las dimensiones de la zapata permiten soportar la carga inicial sobre los estratos con las características ingresadas. '
-            const m2 = 'Sin embargo, se recomienda cambiar ligeramente las dimensiones con el objetivo de tener un margen de carga mayor entre la ingresada y la calculada. '
-            const m3 = 'Por otro lado, los resultados de asentamientos nos indican que el desplazamiento de la carga es menor al máximo permitido de 30cm'
-    
-            bodyModal.innerHTML = '<br><p style="color: yellow; text-align: center;"><i class="fa fa-exclamation-triangle fa-5x"></i></p><br><br>' + m1 + '<br><br>' + m2 + '<br><br>' + m3
+    if (1.1 * qload < qadm) {
 
-            message = m1 + m2 + m3
+        m1 = 'De acuerdo al análisis realizado con los datos ingresados, las simulaciones realizadas indican que las dimensiones de zapata y perfíl geotécnico cumplen en términos de capacidad portante. Se establece con seguridad que el diseño de la zapata es el adecuado.'
+
+        if (tAsentamientos < 3) {
+
+            m2 = 'Los asentamientos calculados indican que las deformaciones están dentro del rango permisible de 3 cm y de la tolerancia de asentamientos totales según H.4.9.2 (a)'
+    
+            bodyModal.innerHTML = '<br><p style="color: green; text-align: center;"><i class="fa fa-check-circle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
+    
+        } else if (tAsentamientos < 30) {
+
+            m2 = 'Los asentamientos calculados indican que las deformaciones exceden los límites permisibles de 3 cm para asentamientos y se encuentran dentro del límite según H.4.9.2 (a). Se recomienda realizar una verificación de diseño que considere la validación de los resultados.'
+    
+            bodyModal.innerHTML = '<br><p style="color: yellow; text-align: center;"><i class="fa fa-exclamation-triangle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
     
         } else {
-            const m1 = 'Los cálculos indican que las dimensiones de la zapata no cumplen con la carga mínima ingresada, por tanto es necesario cambiar sus medidas y recalcular. '
+            m2 = 'Los asentamientos calculados indican que las deformaciones exceden los límites permisibles de 3 cm para asentamientos y los límites tolerables según H.4.9.2 (a). Se recomienda modificar el diseño de la cimentación propuesta y realizar un análisis global considerando los asentamientos diferenciales de la estructura.'
 
-            bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><br>' + m1
+            bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
 
-            message = m1
         }
     } else {
-        const m1 = 'Los cálculos de asentamientos indican que los suelos no son aptos para construcción, ya que el desplazamiento de la carga bajo las condiciones de suelos, carga y dimensiones de la zapata es mayor a 30 cm. '
 
-        bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><br>' + m1
+        m1 = 'De acuerdo al análisis realizado con los datos ingresados, las simulaciones realizadas indican que las dimensiones de zapata y perfil geotécnico no cumplen con la capacidad solicitada. Se recomienda modificar dimensiones de zapata y perfil estratigráfico.'
 
-        message = m1
+        if (tAsentamientos < 3) {
+
+            m2 = 'Los asentamientos calculados indican que las deformaciones están dentro del rango permisible de 3 cm y de la tolerancia de asentamientos totales según H.4.9.2 (a)'
+    
+            bodyModal.innerHTML = '<br><p style="color: yellow; text-align: center;"><i class="fa fa-exclamation-triangle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
+    
+        } else if (tAsentamientos < 30) {
+
+            m2 = 'Los asentamientos calculados indican que las deformaciones exceden los límites permisibles de 3 cm para asentamientos y se encuentran dentro del límite según H.4.9.2 (a). Se recomienda realizar una verificación de diseño que considere la validación de los resultados.'
+    
+            bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
+
+        } else {
+            m2 = 'Los asentamientos calculados indican que las deformaciones exceden los límites permisibles de 3 cm para asentamientos y los límites tolerables según H.4.9.2 (a). Se recomienda modificar el diseño de la cimentación propuesta y realizar un análisis global considerando los asentamientos diferenciales de la estructura.'
+
+            bodyModal.innerHTML = '<br><p style="color: red; text-align: center;"><i class="fa fa-times-circle fa-5x"></i></p><br><p>Capacidad:</p><p>' + m1 + '</p><br><p>Asentamientos: </p><p>' + m2 + '</p><br><p>NOTA: </p><p>' + m3 + '</p>'
+        }
+       
     }
+
+    message = [m1, m2, m3]
     
 
     modal.show()

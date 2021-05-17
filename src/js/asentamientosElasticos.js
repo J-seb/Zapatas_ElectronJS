@@ -37,34 +37,46 @@ const calcularI = (m, n) => {
     return i
 } */
 
-const calcularElasticos = (datosZapata, suelo, h) => {
+const calcularElasticos = (datosZapata, suelo, h, z) => {
 
     // Constantes iniciales para el cálculo
 
     // zapatas
     const b = datosZapata.b
+    const df = datosZapata.df
     const l = datosZapata.l
     const bp = b / 2
     const lp = l / 2
-    const mp = l / b
-    const ifz = datosZapata.iF
+    const mp = (l + z)/ (b + z) // Aumentar a l y b la distancia entre el df y el inicio del estrato
 
-    if (arrayParamsElasticosB.length === 0) {
-        arrayParamsElasticosB = [bp, lp, mp]
+    // Porcentaje de carga en determinado suelo
+
+    let influencia = 1
+    if (z !== 0) {
+        const m = b / (2 * z)
+        const n = l / (2 * z)
+        influencia = calcularI(m, n) * 4
     }
 
-    const npc = h / (b / 2)
-    const npe = h / b
+    if (arrayParamsElasticosB.length === 0) {
+        arrayParamsElasticosB = [bp.toFixed(2), lp.toFixed(2)]
+    }
+
+    const npc = h / ((b + z) / 2) // Aumentar a b la distancia entre el df y el inicio del estrato
+    const npe = h / (b + z) // Aumentar a b la distancia entre el df y el inicio del estrato
 
     // suelos
     const mu = parseFloat(suelo.mu)
     const es = parseFloat(suelo.es)
 
     // Carga
-    const q = datosZapata.ql * 9.81 / (b * l)
+    const q = influencia * datosZapata.ql * 9.81 / (b * l) // 
 
     const alphaC = 4
     const alphaE = 1
+
+    // Calculo de IF
+    const ifz = (1.001 + 1.194 * df / b + 0.842 * l / b + 7.63 * mu) / (1 + 3.738 * df / b + 0.839 * l / b + 7.3 * mu)
 
     // Calculamos Asentamiento Centro
     const a0c = calcularA0(mp, npc)
@@ -76,7 +88,9 @@ const calcularElasticos = (datosZapata, suelo, h) => {
 
     const isc = calcularIs(f1c, f2c, mu)
 
-    const asenC = (formulaElasticos(q, alphaC, bp, mu, es, isc, ifz) * 100).toFixed(3)
+    console.log({f1c, f2c, a0c, a1c, a2c, npc, })
+
+    const asenC = !isNaN(formulaElasticos(q, alphaC, bp, mu, es, isc, ifz)) ? (formulaElasticos(q, alphaC, bp, mu, es, isc, ifz) * 100).toFixed(2) : '0.00'
 
     // Calculamos Asentamiento Esquina
     const a0e = calcularA0(mp, npe)
@@ -88,12 +102,12 @@ const calcularElasticos = (datosZapata, suelo, h) => {
 
     const ise = calcularIs(f1e, f2e, mu)
 
-    const asenE = (formulaElasticos(q, alphaE, bp, mu, es, ise, ifz) * 100).toFixed(3)
+    const asenE = !isNaN(formulaElasticos(q, alphaE, bp, mu, es, ise, ifz)) ? (formulaElasticos(q, alphaE, bp, mu, es, ise, ifz) * 100).toFixed(2) : '0.00'
 
     contador = contador + 1
 
-    arrayParamsElasticosC.push([contador, npc.toFixed(3), alphaC.toFixed(3), a0c.toFixed(3), a1c.toFixed(3), a2c.toFixed(3), f1c.toFixed(3), f2c.toFixed(3), isc.toFixed(3)])
-    arrayParamsElasticosE.push([contador, npe.toFixed(3), alphaE.toFixed(3), a0e.toFixed(3), a1e.toFixed(3), a2e.toFixed(3), f1e.toFixed(3), f2e.toFixed(3), ise.toFixed(3)])
+    arrayParamsElasticosC.push([contador, ifz.toFixed(2), mp.toFixed(2), npc.toFixed(2), alphaC.toFixed(2), a0c.toFixed(2), a1c.toFixed(2), a2c.toFixed(2), f1c.toFixed(2), f2c.toFixed(2), isc.toFixed(2)])
+    arrayParamsElasticosE.push([contador, ifz.toFixed(2), mp.toFixed(2), npe.toFixed(2), alphaE.toFixed(2), a0e.toFixed(2), a1e.toFixed(2), a2e.toFixed(2), f1e.toFixed(2), f2e.toFixed(2), ise.toFixed(2)])
 
     return {asenC, asenE}
     
@@ -169,7 +183,7 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
             h = (cotas[i + 1] - limiteSuperior)
 
             console.log('Entramos a limite superior, el valor de h es: ' + h)
-            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
+            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h, cotas[i] - df)
 
             console.log({asenC, asenE})
             arrayElasticosCentro.push(asenC)
@@ -182,17 +196,19 @@ const calcularAsentamientosElasticos = (suelos, datosIniciales, z) => {
             console.log(cotas[i])
             
             console.log('Valor de h es ' + h)
-            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
+            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h, cotas[i] - df)
 
             arrayElasticosCentro.push(asenC)
             arrayElasticosEsquina.push(asenE)
 
             calculoInferior = true
         } else if (calculoSuperior && !calculoInferior && cotas[i] < limiteInferior) {
-            console.log('Entramos a capa completa')
+            
             h = parseFloat(suelos[i].espesor)
+            console.log('Entramos a capa completa, valor de h', h)
 
-            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h)
+            const {asenC, asenE} = calcularElasticos(datosIniciales, suelos[i], h, cotas[i] - df)
+            console.log({asenC, asenE})
             arrayElasticosCentro.push(asenC)
             arrayElasticosEsquina.push(asenE)      
         }

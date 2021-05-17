@@ -94,7 +94,7 @@ const calcularSigmaDeltas = (pos, suelos, z, datosIniciales) => {
     console.log({deltaSup, deltaMed, deltaInf})
 
     if (sigma0) {
-        arrayParamsConsolidados.push([pos + 1, sigma0.toFixed(3), deltaInf.toFixed(3), deltaMed.toFixed(3), deltaSup.toFixed(3), deltaProm.toFixed(3)])
+        arrayParamsConsolidados.push([pos + 1, sigma0.toFixed(2), deltaInf.toFixed(2), deltaMed.toFixed(2), deltaSup.toFixed(2), deltaProm.toFixed(2)])
     }
 
     return {sigma0, deltaProm, h}
@@ -118,17 +118,17 @@ const calcularAsentamientosConsolidados = (suelos, datosIniciales, z) => {
                 // Asentamiento normalmente consolidados
                 console.log('Calculamos asentamiento normalmente consolidado')
                 const consolidado = asentamientoNC(suelos[i], deltaProm, sigma0, h) * 100
-                arrayConsolidados.push(consolidado.toFixed(4))
+                arrayConsolidados.push(consolidado.toFixed(2))
             } else if (suelos[i].cs && !suelos[i].cc || (sigma0 + deltaProm <= datosIniciales.sigmac)) {
                 // Asentamiento sobre consolidado caso I
                 
                 const consolidado = asentamientoSC1(suelos[i], deltaProm, sigma0, h) * 100
-                arrayConsolidados.push(consolidado.toFixed(4))
+                arrayConsolidados.push(consolidado.toFixed(2))
             } else if (suelos[i].cc && suelos[i].cs || (sigma0 + deltaProm > datosIniciales.sigmac)) {
                 // Asentamiento sobre consolidado caso II
                 
                 const consolidado = asentamientoSC2(suelos[i], deltaProm, sigma0, h) * 100
-                arrayConsolidados.push(consolidado.toFixed(4))
+                arrayConsolidados.push(consolidado.toFixed(2))
             }
             
         }

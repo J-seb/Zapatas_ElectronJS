@@ -9,15 +9,12 @@ const graph2d = () => {
         
 
         if (datos.length === 0) {
-            eGraph(ctx, 310, 70, '#795548', 100, 'Arena', 'H1')
-            eGraph(ctx, 310, 170, '#ff9800', 140, 'Arcilla', 'H2')
-            eGraph(ctx, 310, 310, '#7f2b11', 110, 'Grava', 'H3')
+            eGraph(ctx, 300, 70, '#795548', 100, 'Arena', 'H1')
+            eGraph(ctx, 300, 170, '#ff9800', 140, 'Arcilla', 'H2')
+            eGraph(ctx, 300, 310, '#7f2b11', 110, 'Grava', 'H3')
 
-            zGraph(ctx, 310, 70, '#a8a3a3', 200, 250, 40, 240, 50, 'B', 'df', 'd', 'nf')
-            flechaVU2D(ctx, 310, 50, 30, 'Carga (Ton)')
-
-            eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
-            text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
+            zGraph(ctx, 300, 70, '#a8a3a3', 200, 250, 40, 240, 50, 'B', 'df', 'd', 'nf')
+            flechaVU2D(ctx, 305, 50, 30, 'Carga (Ton)')
 
         } else {
             // Ancho Total Estratos = 500px
@@ -35,7 +32,7 @@ const graph2d = () => {
                 datos.forEach((suelo) => {
                     const hpx = espesor2px(suelo.espesor, 350, totalProfundidad)
 
-                    eGraph(ctx, 310, 70 + acum, suelo.color, hpx, suelo.nombre, `${suelo.espesor} m`)
+                    eGraph(ctx, 300, 70 + acum, suelo.color, hpx, suelo.nombre, `${suelo.espesor} m`)
                     acum = acum + hpx
                 })
                 const df = espesor2px(parseFloat(datosIniciales.df), 350, totalProfundidad)
@@ -44,17 +41,18 @@ const graph2d = () => {
                 const nf = espesor2px(parseFloat(datosIniciales.nf), 350, totalProfundidad)
                 const d = espesor2px(parseFloat(datosIniciales.nf) - parseFloat(datosIniciales.df), 350, totalProfundidad)
 
-                zGraph(ctx, 310, 70, '#a8a3a3', df, b, d, nf, anchoZ, `${datosIniciales.b} m`, `${datosIniciales.df} m`, `${datosIniciales.nf - datosIniciales.df} m`, `${datosIniciales.nf} m`)
+                zGraph(ctx, 300, 70, '#a8a3a3', df, b, d, nf, anchoZ, `${datosIniciales.b} m`, `${datosIniciales.df} m`, `${datosIniciales.nf - datosIniciales.df} m`, `${datosIniciales.nf} m`)
 
-                flechaVU2D(ctx, 310, 50, 30, `${datosIniciales.ql} Ton`)
+                flechaVU2D(ctx, 300, 50, 30, `${datosIniciales.ql} Ton`)
             }
             else {
                 alert('Por favor ingrese datos iniciales para mostrar gráfica 2D')
             }
+        }   
 
-            eGraph(ctx, 310, 420, '#656565', 30, '', 'Inf')
-            text(ctx, 'E S T R A T O   R O C O S O', 177, 443, 20)
-        }      
+        eGraph(ctx, 300, 420, '#656565', 30, '', 'Inf')
+        text(ctx, 'E S T R A T O   R O C O S O', 167, 443, 20)   
+
     } else {
         alert('Canvas is not supported in this app')
     }
@@ -83,8 +81,11 @@ const zGraph = (ctx, x, y, color, h, b, d, nf, az, sB, sdf, sd, snf) => {
 
     cGraphH(ctx, b, x - b/2, y + h - az/2, sB)
     cGraphV(ctx, h, x - 270, y, sdf)
-    cGraphV(ctx, d, x - 270, y + h, sd)
-    cGraphV(ctx, nf, x - 290, y, snf)
+    if (d) {
+        cGraphV(ctx, d, x - 270, y + h, sd)
+    }
+    
+    //cGraphV(ctx, nf, x - 290, y, snf)
 
 }
 

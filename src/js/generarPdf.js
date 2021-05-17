@@ -1,4 +1,5 @@
 const { jsPDF } = require("jspdf")
+const moment = require('moment')
 const path = require('path')
 const fs = require('fs')
 require('jspdf-autotable')
@@ -42,15 +43,24 @@ const crearPDF = () => {
         floatPrecision: 16
     });
 
+    const time = new Date().getTime()
+    const date = moment(time).format('DD/MM/YYYY hh:mm a')
+
     // Ingresamos y cargamos las fonts previamente convertidas de ttf a base64 ubicadas en
     // js/fonts
 
-    let fontUsed = "Montserrat"
+    let fontUsed = "Roman10"
+
+    doc.addFileToVFS("LM-Roman-10-Regular.ttf", lmRomanFont)
+    doc.addFont("LM-Roman-10-Regular.ttf", "Roman10", "normal")
+
+    doc.addFileToVFS("LM-Roman-10-Regular-Bold.ttf", lmRomanFontBold)
+    doc.addFont("LM-Roman-10-Regular-Bold.ttf", "Roman10", "bold")
 
     doc.addFileToVFS("Montserrat-Regular.ttf", montserratFont)
     doc.addFont("Montserrat-Regular.ttf", "Montserrat", "normal")
 
-    doc.addFileToVFS("Montserrat-Regular-Bold.ttf", monserratFontBold)
+    doc.addFileToVFS("Montserrat-Regular-Bold.ttf", montserratFontBold)
     doc.addFont("Montserrat-Regular-Bold.ttf", "Montserrat", "bold")
 
     doc.addFileToVFS("Roboto-Regular.ttf", robotoFont)
@@ -69,18 +79,22 @@ const crearPDF = () => {
 
     let colorHead = [66, 66, 66]
     
-    // Configuramos el tamaño de letra y título
+    // Configuramos el tamaño de letra para fecha y titulo título
+
+    doc.setFontSize(8)
+    doc.setTextColor(0)
+    doc.text('Fecha y hora de reporte: ' + date, 135, 32)
     
     doc.setFontSize(16)
     doc.setTextColor(0)
-    doc.text("CÁLCULO CAPACIDAD PORTANTE Y ASENTAMIENTOS", 27, 23, );
+    doc.text("CÁLCULO CAPACIDAD PORTANTE Y ASENTAMIENTOS", 27, 23);
 
     doc.rect(14, 14, 210-28, 297-28)
 
     doc.line(14, 28, 210-14, 28)
 
     doc.setFontSize(14)
-    doc.text("Resultados", 90, 35, );
+    doc.text("Resultados", 95, 40);
 
     doc.setFontSize(12)
     //doc.setTextColor(92, 92, 92)
@@ -113,14 +127,14 @@ const crearPDF = () => {
     doc.setFontSize(12)
     doc.setFont(fontUsed, 'bold')
     //doc.setTextColor(92, 92, 92)
-    doc.text('Datos iniciales ingresados', 16, 142)
+    doc.text('Condiciones de carga - Geometría - Nivel Freático', 16, 142)
 
     let datosI = Object.values(datosIniciales)
     datosI.push(met.slice(0, 1).toUpperCase() + met.slice(1, met.length))
 
     doc.setFont(fontUsed, 'normal')
     doc.autoTable({
-        head: [['L [m]', 'B [m]', 'IF', 'NF [m]', 'Df [m]', 'Qload [ton]', 'Phi(i) [°]', 'FS', 'Metodología']],
+        head: [['L [m]', 'B [m]', 'NF [m]', 'Df [m]', 'Qload [ton]', 'FS', 'Phi(i) [°]', 'Metodología']],
         body: [datosI],
         startY: 148,
         headStyles: {
@@ -138,12 +152,12 @@ const crearPDF = () => {
         }
     })
     doc.setDrawColor('gray')
-    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5)
 
     doc.setFontSize(12)
     doc.setFont(fontUsed, 'bold')
     //doc.setTextColor(92, 92, 92)
-    doc.text('Datos de suelos', 16, doc.lastAutoTable.finalY + 15)
+    doc.text('Perfil Geotécnico', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         html: '#tabla-datos', 
@@ -163,7 +177,7 @@ const crearPDF = () => {
         }
     })
     doc.setDrawColor('gray')
-    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
+    doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5)
 
    /*  doc.setFontSize(14)
     doc.setFont(fontUsed, 'normal')
@@ -172,11 +186,11 @@ const crearPDF = () => {
  */
     doc.setFontSize(12)
     doc.setFont(fontUsed, 'bold')
-    doc.text('Capacidad Portante', 16, doc.lastAutoTable.finalY + 22)
+    doc.text('Análisis de Capacidad Portante', 72, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
         html: '#tabla-resultados', 
-        startY: doc.lastAutoTable.finalY + 27,
+        startY: doc.lastAutoTable.finalY + 22,
         showHead: 'firstPage',
         headStyles: {
             fillColor: colorHead
@@ -367,7 +381,7 @@ const crearPDF = () => {
 
     doc.setFontSize(12)
     doc.setFont(fontUsed, 'bold')
-    doc.text('Asentamientos', 90, doc.lastAutoTable.finalY + 15)
+    doc.text('Cálculo de Asentamientos', 75, doc.lastAutoTable.finalY + 15)
 
     //doc.setFontSize(12)
     //doc.setFont('helvetica', 'normal')
@@ -411,30 +425,12 @@ const crearPDF = () => {
         }
     })
 
-    doc.autoTable({
-        body: [["m'", arrayParamsElasticosB[2]]],
-        startY: autFinalY + 35,
-        columnStyles: {
-            0: { fillColor: colorHead, textColor: 255},
-        },
-        styles: {
-            font: fontUsed,
-            fontStyle: 'normal',
-            halign: 'center',
-            valign: 'middle',
-        },
-        margin: {
-            left: 138,
-            right: 16
-        }
-    })
-
     doc.setFontSize(12)
     doc.setFont(fontUsed , 'bold')
     doc.text('Asentamientos en centro', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
-        head: [["Estrato", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
+        head: [["Estrato", "If", "m'", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
         body: arrayParamsElasticosC,
         startY: doc.lastAutoTable.finalY + 20,
         headStyles: {
@@ -458,7 +454,7 @@ const crearPDF = () => {
     doc.text('Asentamientos en esquinas', 16, doc.lastAutoTable.finalY + 15)
 
     doc.autoTable({
-        head: [["Estrato", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
+        head: [["Estrato", "If", "m'", "n'", 'Alpha', 'A0', 'A1', 'A2', 'F1', 'F2', 'Is']],
         body: arrayParamsElasticosE,
         startY: doc.lastAutoTable.finalY + 20,
         headStyles: {
@@ -589,7 +585,6 @@ const crearPDF = () => {
             right: 16
         }
     })
-    
 
     doc.setDrawColor('gray')
     doc.line(14, doc.lastAutoTable.finalY + 5, 210-14, doc.lastAutoTable.finalY + 5, 'DF')
@@ -600,13 +595,35 @@ const crearPDF = () => {
 
     doc.setFontSize(10)
     doc.setFont(fontUsed, 'normal')
+    doc.text('Capacidad', 16, doc.lastAutoTable.finalY + 23)
 
-    doc.text(message, 16, doc.lastAutoTable.finalY + 22, {
+    doc.setFontSize(10)
+    doc.text(message[0], 16, doc.lastAutoTable.finalY + 28, {
         align: "justify",
         maxWidth: 210 - 32
     })
 
-    doc.rect(14, 14, 210-28, doc.lastAutoTable.finalY + 30)
+    doc.setFontSize(10)
+    doc.setFont(fontUsed, 'normal')
+    doc.text('Asentamientos:', 16, doc.lastAutoTable.finalY + 45)
+
+    doc.setFontSize(10)
+    doc.text(message[1], 16, doc.lastAutoTable.finalY + 50, {
+        align: "justify",
+        maxWidth: 210 - 32
+    })
+
+    doc.setFontSize(10)
+    doc.setFont(fontUsed, 'normal')
+    doc.text('NOTA:', 16, doc.lastAutoTable.finalY + 67)
+
+    doc.setFontSize(10)
+    doc.text(message[2], 16, doc.lastAutoTable.finalY + 72, {
+        align: "justify",
+        maxWidth: 210 - 32
+    })
+
+    doc.rect(14, 14, 210-28, doc.lastAutoTable.finalY + 78)
 
     doc.save(generateNewName())
 
